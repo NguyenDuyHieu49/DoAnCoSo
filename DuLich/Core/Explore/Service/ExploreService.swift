@@ -1,18 +1,15 @@
 //
 //  ExploreService.swift
-//  DuLich
+//  BookingApp
 //
-//  Created by Macbook Pro on 5/5/26.
+//  Created by Macbook Pro on 3/5/26.
 //
 
-import SwiftUI
+import Foundation
 
-struct ExploreService: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+class ExploreService{
+    
+    func fecthListings() async throws -> [Listing] {
+        return DeveloperPreview.shared.listings
     }
-}
-
-#Preview {
-    ExploreService()
 }
