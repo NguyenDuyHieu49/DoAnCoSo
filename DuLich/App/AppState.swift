@@ -5,14 +5,19 @@
 //  Created by Macbook Pro on 6/5/26.
 //
 
-import SwiftUI
+import Foundation
+import Combine
 
-struct AppState: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+final class AppState: ObservableObject {
+    @Published var hasSeenWelcome: Bool = false
+
+    init() {
+        // load from UserDefaults nếu cần
+        hasSeenWelcome = UserDefaults.standard.bool(forKey: "hasSeenWelcome")
     }
-}
 
-#Preview {
-    AppState()
+    func markWelcomeSeen() {
+        hasSeenWelcome = true
+        UserDefaults.standard.set(true, forKey: "hasSeenWelcome")
+    }
 }

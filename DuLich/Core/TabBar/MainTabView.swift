@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @State private var showSignInView: Bool = false
     var body: some View {
         TabView {
             ExploreView()
@@ -16,12 +17,16 @@ struct MainTabView: View {
             WishlistsView()
                 .tabItem { Label("Danh sách", systemImage: "heart") }
 
-            CreateAccountView()
+            ProfileView()
                 .tabItem { Label("Thông tin", systemImage: "person.fill") }
+            SettingsView(showSignInView: $showSignInView)
+                .tabItem { Label("Cài đặt", systemImage: "gear") }
         }
     }
 }
 
+
 #Preview {
     MainTabView()
 }
+

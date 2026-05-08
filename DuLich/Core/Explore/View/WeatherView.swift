@@ -2,17 +2,28 @@
 //  WeatherView.swift
 //  DuLich
 //
-//  Created by Macbook Pro on 5/5/26.
+//  Created by Macbook Pro on 1/5/26.
 //
 
 import SwiftUI
 
-struct WeatherView: View {
+struct MiniWeatherCard: View {
+    @ObservedObject var viewModel: WeatherViewModel
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text(viewModel.temperature)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            Text(viewModel.description)
+                .font(.subheadline)
+                .foregroundColor(.gray)
+        }
+        .frame(width: 150, height: 100)
+        .background(Color.blue.opacity(0.2))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .onTapGesture {
+        }
     }
 }
 
-#Preview {
-    WeatherView()
-}

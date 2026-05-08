@@ -7,20 +7,30 @@
 
 import SwiftUI
 struct RootView: View {
-    @EnvironmentObject var auth: AuthViewModel
-    @EnvironmentObject var appState: AppState
-
+    
+    @State private var showSignInView: Bool = false
     var body: some View {
-        Group {
-            if auth.isAuthenticated {
-                MainTabView()
-            } else {
-                if appState.hasSeenWelcome {
-                    LoginView()
-                } else {
-                    WelcomeView()
+        ZStack{
+            if !showSignInView{
+                NavigationStack{
+                    SettingsView(showSignInView: $showSignInView)
                 }
             }
         }
-    }
+        .onAppear{
+            let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
+            self.showSignInView = authUser == nil
+        }
+        .fullScreenCover(isPresented: $showSignInView) {
+            NavigationStack{
+                AuthenticationView(showSignInView: $showSignInView)
+            }
+        }
+  }
 }
+    struct RootViewPreview: PreviewProvider {
+        static var previews: some View {
+            RootView()
+        }
+    }
+

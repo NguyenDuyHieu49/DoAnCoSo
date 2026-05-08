@@ -1,13 +1,6 @@
-//
-//  DestinationSearch.swift
-//  BookingApp
-//
-//  Created by Macbook Pro on 15/4/26.
-//1h47
-
 import SwiftUI
 
-enum DestinationSearchState{
+enum DestinationSearchState {
     case location
     case dateGo
     case quantity
@@ -15,6 +8,8 @@ enum DestinationSearchState{
 
 struct DestinationSearch: View {
     @Binding var show: Bool
+    var onSearch: (String) -> Void   // callback
+    
     @State private var destination: String = ""
     @State private var selectedOption: DestinationSearchState = .location
     @State private var startDate = Date()
@@ -22,6 +17,7 @@ struct DestinationSearch: View {
     @State private var numPeople = 0
 
     var body: some View {
+        VStack {
             HStack {
                 Button { withAnimation(.snappy) { show.toggle() } } label: {
                     Image(systemName: "xmark.circle")
@@ -30,15 +26,18 @@ struct DestinationSearch: View {
                 }
                 Spacer()
                 if !destination.isEmpty {
-                    Button("Clear") { destination = "" }
-                        .foregroundStyle(.secondary)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                    Button("Clear") {
+                        destination = ""
+                        onSearch("")   // reset danh sách
+                    }
+                    .foregroundStyle(.secondary)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
                 }
             }
             .padding()
             
-            // Ô địa điểm riêng
+            // Ô địa điểm
             VStack(alignment: .leading) {
                 if selectedOption == .location {
                     Text("Địa điểm cần tìm")
@@ -51,13 +50,14 @@ struct DestinationSearch: View {
                         TextField("Tìm kiếm", text: $destination)
                             .font(.subheadline)
                             .onSubmit {
-                                print("Cập nhật danh sách địa điểm")
+                                onSearch(destination)
+                                show = false
                             }
                     }
                     .frame(height: 44)
                     .padding(.horizontal)
                     .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 12)) // bo góc đúng chỗ
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(lineWidth: 1)
@@ -68,38 +68,32 @@ struct DestinationSearch: View {
                 }
             }
             .padding()
-            
-            .padding()
             .frame(height: selectedOption == .location ? 120 : 64)
             .background(.green)
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding()
             .shadow(radius: 10)
-            .onTapGesture{
-                withAnimation(.snappy){selectedOption = .location}}
-            //date time
-            VStack(alignment: .leading){
-                if selectedOption == .dateGo{
+            .onTapGesture {
+                withAnimation(.snappy) { selectedOption = .location }
+            }
+            
+            // Date time
+            VStack(alignment: .leading) {
+                if selectedOption == .dateGo {
                     Text("Chọn ngày")
                         .font(.title2)
                         .fontWeight(.semibold)
                     
-                    VStack{
-                        DatePicker("Ngày đi", selection: $startDate,
-                                   displayedComponents: .date)
-                        
-
+                    VStack {
+                        DatePicker("Ngày đi", selection: $startDate, displayedComponents: .date)
                         Spacer()
-                        
-                        DatePicker("Ngày về", selection: $endDate,
-                                   displayedComponents: .date)
-                        
+                        DatePicker("Ngày về", selection: $endDate, displayedComponents: .date)
                     }
                     .foregroundStyle(.gray)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     Spacer()
-                }else {
+                } else {
                     ExtractedView(title: "Ngày đi", description: "Thêm ngày")
                 }
             }
@@ -109,31 +103,30 @@ struct DestinationSearch: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding()
             .shadow(radius: 10)
-            .onTapGesture{
-                withAnimation(.snappy){selectedOption = .dateGo}
+            .onTapGesture {
+                withAnimation(.snappy) { selectedOption = .dateGo }
             }
             
-            //guest quantity
-            VStack(alignment: .leading){
-                if selectedOption == .quantity{
+            // Guest quantity
+            VStack(alignment: .leading) {
+                if selectedOption == .quantity {
                     Text("Số lượng người")
                         .font(.title)
                         .fontWeight(.semibold)
-                    VStack{
-                        Stepper{
+                    VStack {
+                        Stepper {
                             Text("\(numPeople) người lớn")
                             Text("Miễn phí cho trẻ em dưới 5 tuổi")
                                 .font(.caption)
                                 .foregroundColor(.gray)
-                        }onIncrement: {
+                        } onIncrement: {
                             numPeople += 1
-                        }onDecrement: {
-                            guard numPeople > 0 else {return}
-                            numPeople  -= 1
+                        } onDecrement: {
+                            guard numPeople > 0 else { return }
+                            numPeople -= 1
                         }
-                        
                     }
-                }else {
+                } else {
                     ExtractedView(title: "Lượng khách", description: "Thêm số lượng")
                 }
             }
@@ -143,14 +136,17 @@ struct DestinationSearch: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding()
             .shadow(radius: 10)
-            .onTapGesture{
-                withAnimation(.snappy){selectedOption = .quantity}}
+            .onTapGesture {
+                withAnimation(.snappy) { selectedOption = .quantity }
+            }
+            
             Spacer()
+        }
     }
 }
 
 #Preview {
-    DestinationSearch(show: .constant(false))
+    DestinationSearch(show: .constant(false), onSearch: { _ in })
 }
 
 struct ExtractedView: View {
@@ -158,18 +154,15 @@ struct ExtractedView: View {
     let description: String
     
     var body: some View {
-        VStack{
-            HStack{
+        VStack {
+            HStack {
                 Text(title)
                     .foregroundStyle(.gray)
-                
                 Spacer()
-                
                 Text(description)
             }
-                    .fontWeight(.semibold)
-                    .font(.subheadline)
-            }
+            .fontWeight(.semibold)
+            .font(.subheadline)
         }
     }
-
+}
