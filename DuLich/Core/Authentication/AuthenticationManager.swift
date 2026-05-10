@@ -121,13 +121,19 @@ extension AuthenticationManager{
     
     func linkEmail(email: String, password: String) async throws -> AuthDataResultModel{
         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-        
-        guard let user = Auth.auth().currentUser  else {
+        return try await linkCredential(credential: credential)
+    }
+    
+    private func linkCredential(credential: AuthCredential) async throws -> AuthDataResultModel{
+        guard let user = Auth.auth().currentUser else {
             throw URLError(.badURL)
         }
         let authDataResult = try await user.link(with: credential)
         return AuthDataResultModel(user: authDataResult.user)
     }
-    
+    func linkGoogle(tokens: GoogleSignInResultModel) async throws -> AuthDataResultModel{
+        let credential = GoogleAuthProvider.credential(withIDToken: tokens.idToken, accessToken: tokens.accessToken)
+        return try await linkCredential(credential: credential)
+    }
 }
 

@@ -17,10 +17,8 @@ struct MainTabView: View {
             WishlistsView()
                 .tabItem { Label("Danh sách", systemImage: "heart") }
 
-            ProfileView()
+            ProfileView(showSignInView: $showSignInView)
                 .tabItem { Label("Thông tin", systemImage: "person.fill") }
-            SettingsView(showSignInView: $showSignInView)
-                .tabItem { Label("Cài đặt", systemImage: "gear") }
         }
     }
 }

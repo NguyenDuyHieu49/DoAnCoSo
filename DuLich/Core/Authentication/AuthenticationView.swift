@@ -12,20 +12,6 @@ import Combine
 import FirebaseAuth
 
 
-@MainActor
-final class AuthenticationViewModel: ObservableObject {
-    
-    func signInGoogle() async throws{
-        let sIG = SignInGoogle()
-        let tokens = try await sIG.signIn()
-        try await AuthenticationManager.shared.signInWithGoogle(tokens: tokens)
-    }
-    
-    func signInAnonymous() async throws{
-        try await AuthenticationManager.shared.signInAnonymous()
-    }
-}
-
 struct AuthenticationView: View {
     @StateObject private var viewModel = AuthenticationViewModel()
     @Binding var showSignInView: Bool
