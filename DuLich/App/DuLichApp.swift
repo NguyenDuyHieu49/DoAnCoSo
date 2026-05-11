@@ -3,8 +3,7 @@ import FirebaseCore
 
 @main
 struct DuLichApp: App {
-    
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var authState = AuthState()
 
     init() {
         FirebaseApp.configure()
@@ -12,15 +11,8 @@ struct DuLichApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                RootView()
-            }
+            RootView()
+                .environmentObject(authState)
         }
-    }
-}
-class AppDelegate: NSObject, UIApplicationDelegate{
-    func application(_ application: UIApplication, didFinishLaunchingWithTopOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil ) -> Bool {
-        FirebaseApp.configure()
-        return true
     }
 }

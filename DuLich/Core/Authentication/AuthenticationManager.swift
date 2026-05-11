@@ -136,4 +136,3 @@ extension AuthenticationManager{
         return try await linkCredential(credential: credential)
     }
 }
-

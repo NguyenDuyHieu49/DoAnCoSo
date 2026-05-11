@@ -1,30 +1,34 @@
-//
-//  MainTabView.swift
-//  BookingApp
-//
-//  Created by Macbook Pro on 27/4/26.
-//
-
+// MainTabView.swift
 import SwiftUI
 
 struct MainTabView: View {
-    @State private var showSignInView: Bool = false
+    @Binding var selectedTab: AppTab
+    @State private var showSignInView = false 
     var body: some View {
-        TabView {
-            ExploreView()
-                .tabItem { Label("Khám phá", systemImage: "magnifyingglass") }
+        TabView(selection: $selectedTab) {
+            NavigationStack {
+                ExploreView()
+            }
+            .tabItem { Label("Explore", systemImage: "safari") }
+            .tag(AppTab.explore)
 
-            WishlistsView()
-                .tabItem { Label("Danh sách", systemImage: "heart") }
+            NavigationStack {
+                HistoryView()
+            }
+            .tabItem { Label("History", systemImage: "clock") }
+            .tag(AppTab.history)
 
-            ProfileView(showSignInView: $showSignInView)
-                .tabItem { Label("Thông tin", systemImage: "person.fill") }
+            NavigationStack {
+                ProfileView()
+            }
+            .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+            .tag(AppTab.profile)
+
+            NavigationStack {
+                SettingsView(showSignInView: $showSignInView)
+            }
+            .tabItem { Label("Settings", systemImage: "gear") }
+            .tag(AppTab.settings)
         }
     }
 }
-
-
-#Preview {
-    MainTabView()
-}
-

@@ -1,36 +1,38 @@
-//
-//  RootView.swift
-//  DuLich
-//
-//  Created by Macbook Pro on 6/5/26.
-//
-
+// RootView.swift
 import SwiftUI
+
 struct RootView: View {
-    
-    @State private var showSignInView: Bool = false
+    @EnvironmentObject private var authState: AuthState
+    @State private var showSignIn: Bool = false
+    @State private var selectedTab: AppTab = .explore
+
     var body: some View {
-        ZStack{
-            if !showSignInView{
-                NavigationStack{
-                    ProfileView(showSignInView: $showSignInView)
+        MainTabView(selectedTab: $selectedTab)
+            .onAppear {
+                // Khi app mở, show SignIn nếu chưa đăng nhập
+                showSignIn = !authState.isSignedIn
+                if authState.isSignedIn {
+                    selectedTab = .explore
+                } else {
+                    selectedTab = .explore
                 }
             }
-        }
-        .onAppear{
-            let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
-            self.showSignInView = authUser == nil
-        }
-        .fullScreenCover(isPresented: $showSignInView) {
-            NavigationStack{
-                AuthenticationView(showSignInView: $showSignInView)
+            // Lắng nghe publisher của AuthState
+            .onReceive(authState.$isSignedIn) { signedIn in
+                if signedIn {
+                    selectedTab = .explore   // hoặc .profile nếu bạn muốn
+                    showSignIn = false
+                } else {
+                    showSignIn = true
+                }
             }
-        }
-  }
-}
-    struct RootViewPreview: PreviewProvider {
-        static var previews: some View {
-            RootView()
-        }
+            .fullScreenCover(isPresented: $showSignIn, onDismiss: {
+                if !authState.isSignedIn { showSignIn = true }
+            }) {
+                NavigationStack {
+                    SignInEmailView(showSignInView: $showSignIn)
+                        .interactiveDismissDisabled(true)
+                }
+            }
     }
-
+}

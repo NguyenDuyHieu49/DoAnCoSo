@@ -1,49 +1,52 @@
-//
-//  SignInEmailView.swift
-//  DuLich
-//
-//  Created by Macbook Pro on 7/5/26.
-//
-
+// SignInEmailView.swift
 import SwiftUI
 import Combine
 
 struct SignInEmailView: View {
-    @StateObject private var viewModel = SignInEmailModel()
+    @StateObject private var viewModel = SignInEmailViewModel()
     @Binding var showSignInView: Bool
-    
+
     var body: some View {
         VStack(spacing: 16) {
-            TextField("Email", text: $viewModel.email)
-                .textContentType(.emailAddress)
-                .keyboardType(.emailAddress)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(10)
-            
-            SecureField("Password", text: $viewModel.password)
-                .textContentType(.password)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(10)
-            
+            // Explicit Binding to viewModel.email
+            TextField("Email", text: Binding(
+                get: { viewModel.email },
+                set: { viewModel.email = $0 }
+            ))
+            .textContentType(.emailAddress)
+            .keyboardType(.emailAddress)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .padding()
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(10)
+
+            // Explicit Binding to viewModel.password
+            SecureField("Password", text: Binding(
+                get: { viewModel.password },
+                set: { viewModel.password = $0 }
+            ))
+            .textContentType(.password)
+            .padding()
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(10)
+
             Button(action: {
                 Task {
+                    // Gọi đúng tên hàm trong ViewModel: signup() và signin()
                     do {
-                        try await viewModel.signUp()
+                        try await viewModel.signup()
                         showSignInView = false
                         return
                     } catch {
-                        print(error)
+                        print("signup error:", error)
                     }
                     do {
-                        try await viewModel.signIn()
+                        try await viewModel.signin()
                         showSignInView = false
                         return
                     } catch {
-                        print(error)
+                        print("signin error:", error)
                     }
                 }
             }, label: {
@@ -55,7 +58,7 @@ struct SignInEmailView: View {
                     .background(Color.blue)
                     .cornerRadius(10)
             })
-            
+
             Spacer()
         }
         .padding()

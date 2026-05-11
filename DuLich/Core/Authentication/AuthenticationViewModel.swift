@@ -14,12 +14,12 @@ final class AuthenticationViewModel: ObservableObject {
         let sIG = SignInGoogle()
         let tokens = try await sIG.signIn()
         let authDataResult = try await AuthenticationManager.shared.signInWithGoogle(tokens: tokens)
-        let user = DBUser (userId: authDataResult.uid, isAnonymous: authDataResult.isAnonymous, email: authDataResult.email, photoUrl: authDataResult.photoUrl, dateCreated: Date())
+        let user = DBUser (userid: authDataResult.uid, isAnonymous: authDataResult.isAnonymous, email: authDataResult.email, photoUrl: authDataResult.photoUrl, dateCreated: Date())
         try await UserManager.shared.createNewUser(user: user)    }
     
     func signInAnonymous() async throws{
         let authDataResult = try await AuthenticationManager.shared.signInAnonymous()
-        let user = DBUser (userId: authDataResult.uid, isAnonymous: authDataResult.isAnonymous, email: authDataResult.email, photoUrl: authDataResult.photoUrl, dateCreated: Date())
+        let user = DBUser (userid: authDataResult.uid, isAnonymous: authDataResult.isAnonymous, email: authDataResult.email, photoUrl: authDataResult.photoUrl, dateCreated: Date())
         try await UserManager.shared.createNewUser(user: user)
     }
 }
