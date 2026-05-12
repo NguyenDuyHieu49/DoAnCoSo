@@ -1,123 +1,116 @@
-//
-//  AuthenticationView.swift
-//  DuLich
-//
-//  Created by Macbook Pro on 7/5/26.
-//
-
+// AuthenticationView.swift
 import SwiftUI
 import GoogleSignIn
 import GoogleSignInSwift
 import Combine
 import FirebaseAuth
 
-
 struct AuthenticationView: View {
     @StateObject private var viewModel = AuthenticationViewModel()
     @Binding var showSignInView: Bool
-    
+
+    @EnvironmentObject private var authState: AuthState
+
+    // NEW: closure to notify parent that sign-in succeeded
+    var onSignInSuccess: (() -> Void)? = nil
+
     var body: some View {
-        VStack{
-            
-            Button(action:{
-                Task{
+        VStack(spacing: 16) {
+            Button(action: {
+                Task {
                     do {
-                        try await viewModel.signInAnonymous()
-                        showSignInView = false
+                        let result = try await viewModel.signInAnonymous()
+                        print("[AuthView] anonymous uid:", result.uid)
+                        Task { @MainActor in
+                            authState.startListening()
+                            // Notify parent and close
+                            onSignInSuccess?()
+                            showSignInView = false
+                        }
                     } catch {
-                        print(error.localizedDescription)
+                        print("Anonymous sign-in error:", error.localizedDescription)
                     }
                 }
-                
-            },label: {
-                Text("Đăng nhập với tư cách khách")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.black)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(.white.opacity(0.3))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(alignment: .leading) {
-                        
-                        Image(systemName: "person.crop.circle")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
-                            .padding(.leading, 20)
-                    }
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(.gray.opacity(0.3), lineWidth: 1)
-                    }
+            }) {
+                authButtonLabel(title: "Đăng nhập với tư cách khách", systemImage: "person.crop.circle")
             }
-        )
-            
-            NavigationLink{
+
+            NavigationLink {
                 SignInEmailView(showSignInView: $showSignInView)
-            }label: {
-                Text("Đăng nhập với Email")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.black)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(alignment:.leading){
-                        Image (systemName: "envelope")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
-                            .padding(.leading, 20)
-                    }
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(.gray.opacity(0.3), lineWidth: 1)
-                    }
+                    .environmentObject(authState)
+            } label: {
+                authButtonLabel(title: "Đăng nhập với Email", systemImage: "envelope")
             }
-            
+
             Button {
                 Task {
                     do {
-                        try await viewModel.signInGoogle()
-                        showSignInView = false
+                        let resultModel = try await viewModel.signInGoogle()
+                        print("[AuthView] signInGoogle uid:", resultModel.uid)
+                        Task { @MainActor in
+                            authState.startListening()
+                            // Notify parent that onboarding can finish
+                            onSignInSuccess?()
+                            // Close this view/sheet
+                            showSignInView = false
+                        }
                     } catch {
-                        print(error.localizedDescription)
+                        print("Google sign-in error:", error.localizedDescription)
                     }
                 }
             } label: {
-
-                Text("Đăng nhập với Google")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.black)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(alignment: .leading) {
-
-                        Image("google")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
-                            .padding(.leading, 20)
-                    }
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(.gray.opacity(0.3), lineWidth: 1)
-                    }
+                authButtonLabel(title: "Đăng nhập với Google", imageName: "google")
             }
-            Spacer()
-        }.padding()
-            .navigationTitle("Đăng nhập")
 
+            Spacer()
+        }
+        .padding()
+        .navigationTitle("Đăng nhập")
+        .onReceive(authState.$isSignedIn) { signedIn in
+            if signedIn {
+                Task { @MainActor in
+                    // In case authState changes from elsewhere, ensure parent is notified and view closed
+                    onSignInSuccess?()
+                    showSignInView = false
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func authButtonLabel(title: String, systemImage: String? = nil, imageName: String? = nil) -> some View {
+        HStack {
+            if let system = systemImage {
+                Image(systemName: system)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .padding(.leading, 8)
+            } else if let name = imageName {
+                Image(name)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .padding(.leading, 8)
+            }
+
+            Spacer()
+            Text(title)
+                .font(.headline)
+                .fontWeight(.semibold)
+            Spacer()
+        }
+        .frame(height: 56)
+        .background(Color.white)
+        .cornerRadius(10)
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.3)))
     }
 }
 
+// Preview
 #Preview {
-    NavigationStack{
+    NavigationStack {
         AuthenticationView(showSignInView: .constant(false))
+            .environmentObject(AuthState())
     }
 }

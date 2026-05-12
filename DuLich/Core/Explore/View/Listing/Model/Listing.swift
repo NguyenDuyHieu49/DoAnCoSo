@@ -24,6 +24,7 @@ struct Listing: Identifiable, Codable, Hashable{
     var amenities: [ListingAmenities]
     let type: ListingType
     var imageUrls: [String]
+    let distance: Int
 
 }
 

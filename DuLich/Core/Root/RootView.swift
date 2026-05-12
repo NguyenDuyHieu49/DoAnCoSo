@@ -8,30 +8,37 @@ struct RootView: View {
 
     var body: some View {
         MainTabView(selectedTab: $selectedTab)
-            .onAppear {
-                // Khi app mở, show SignIn nếu chưa đăng nhập
+            .task {
+                // Khởi tạo trạng thái khi view xuất hiện
+                print("RootView.task — authState.isSignedIn:", authState.isSignedIn)
                 showSignIn = !authState.isSignedIn
                 if authState.isSignedIn {
                     selectedTab = .explore
-                } else {
-                    selectedTab = .explore
                 }
             }
-            // Lắng nghe publisher của AuthState
-            .onReceive(authState.$isSignedIn) { signedIn in
+            .task {
+                print("RootView.task — authState.isSignedIn:", authState.isSignedIn)
+            }
+            .onAppear {
+                print("RootView.onAppear — authState.isSignedIn:", authState.isSignedIn)
+            }
+
+            .onChange(of: authState.isSignedIn) { signedIn in
+                print("RootView.onChange isSignedIn ->", signedIn)
                 if signedIn {
-                    selectedTab = .explore   // hoặc .profile nếu bạn muốn
+                    selectedTab = .explore
+                    // Đóng màn sign-in nếu đang mở
                     showSignIn = false
                 } else {
+                    // Nếu user sign out, showSignIn = true để yêu cầu đăng nhập
                     showSignIn = true
                 }
             }
-            .fullScreenCover(isPresented: $showSignIn, onDismiss: {
-                if !authState.isSignedIn { showSignIn = true }
-            }) {
+            .fullScreenCover(isPresented: $showSignIn) {
                 NavigationStack {
                     AuthenticationView(showSignInView: $showSignIn)
                         .interactiveDismissDisabled(true)
+                        .environmentObject(authState) // đảm bảo AuthenticationView có access tới authState
                 }
             }
     }

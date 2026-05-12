@@ -24,7 +24,8 @@ final class DeveloperPreview {
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
             type: .villa,
-            imageUrls: ["samson1","samson2","samson3","samson4"]
+            imageUrls: ["samson1","samson2","samson3","samson4"],
+            distance: 200
         ),
         .init(
             id: UUID().uuidString,
@@ -47,7 +48,8 @@ final class DeveloperPreview {
             features: [],
             amenities: [],
             type: .villa,
-            imageUrls: ["dalat1","dalat2","dalat3","dalat4"]
+            imageUrls: ["dalat1","dalat2","dalat3","dalat4"],
+            distance: 1408
         ),
         .init(
             id: UUID().uuidString,
@@ -70,7 +72,8 @@ final class DeveloperPreview {
             features: [],
             amenities: [],
             type: .villa,
-            imageUrls: ["phuquoc1","phuquoc2","phuquoc3","phuquoc4"]
+            imageUrls: ["phuquoc1","phuquoc2","phuquoc3","phuquoc4"],
+            distance: 2017
         ),
         .init(
             id: UUID().uuidString,
@@ -93,7 +96,8 @@ final class DeveloperPreview {
             features: [],
             amenities: [],
             type: .villa,
-            imageUrls: ["nhatrang1","nhatrang2","nhatrang3","nhatrang4"]
+            imageUrls: ["nhatrang1","nhatrang2","nhatrang3","nhatrang4"],
+            distance:  1280
         )
     ]
 }
