@@ -4,8 +4,7 @@ import SwiftUI
 struct OnboardingPage {
     let title: String
     let subtitle: String
-    let imageName: String
-}
+    let imageName: String?}
 
 struct OnboardingPageView: View {
     let page: OnboardingPage
@@ -13,8 +12,9 @@ struct OnboardingPageView: View {
     var body: some View {
         VStack(spacing: 16) {
             Spacer()
-            if UIImage(named: page.imageName) != nil {
-                Image(page.imageName)
+
+            if let name = page.imageName, UIImage(named: name) != nil {
+                Image(name)
                     .resizable()
                     .scaledToFit()
                     .frame(maxHeight: 320)
@@ -22,14 +22,24 @@ struct OnboardingPageView: View {
                     .shadow(radius: 6)
             } else {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(LinearGradient(colors: [Color.blue.opacity(0.2), Color.purple.opacity(0.15)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.blue.opacity(0.2), Color.purple.opacity(0.15)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                     .frame(height: 320)
                     .overlay(
-                        Image(systemName: "airplane")
-                            .font(.system(size: 64))
-                            .foregroundColor(.blue.opacity(0.8))
+                        Image("Onboard")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 120, height: 120)
+                            .cornerRadius(12)
+                            .shadow(radius: 6)
                     )
             }
+
             Spacer()
         }
         .padding(.horizontal)

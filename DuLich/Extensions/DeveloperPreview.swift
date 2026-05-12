@@ -45,8 +45,8 @@ final class DeveloperPreview {
             title: "New Century",
             rating: 4.8,
             district: "CA",
-            features: [],
-            amenities: [],
+            features: [.superHost, .selfCheckIn],
+            amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
             type: .villa,
             imageUrls: ["dalat1","dalat2","dalat3","dalat4"],
             distance: 1408
@@ -69,8 +69,8 @@ final class DeveloperPreview {
             title: "Seashells Phu Quoc Hotel & Spa",
             rating: 4.8,
             district: "CA",
-            features: [],
-            amenities: [],
+            features: [.superHost, .selfCheckIn],
+            amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
             type: .villa,
             imageUrls: ["phuquoc1","phuquoc2","phuquoc3","phuquoc4"],
             distance: 2017
@@ -93,8 +93,8 @@ final class DeveloperPreview {
             title: "Liberty Central Nha Trang",
             rating: 4.8,
             district: "CA",
-            features: [],
-            amenities: [],
+            features: [.superHost, .selfCheckIn],
+            amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
             type: .villa,
             imageUrls: ["nhatrang1","nhatrang2","nhatrang3","nhatrang4"],
             distance:  1280

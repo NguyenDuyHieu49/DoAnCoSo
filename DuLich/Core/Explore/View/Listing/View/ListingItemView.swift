@@ -14,24 +14,18 @@ struct ListingItemView: View {
                     Text("\(listing.city), \(listing.address)")
                         .fontWeight(.semibold)
                         .foregroundColor(.teal)
-                    Text("200 km away").foregroundStyle(.gray)
-                    Text("Apr 12, 2026").foregroundStyle(.gray)
-                    HStack(spacing: 4) {
-                        Text("VND 100 millions").fontWeight(.semibold)
-                        Text("night").foregroundColor(.black)
-                    }
-                    .foregroundColor(.teal)
+                    Text("\(listing.distance) km").foregroundStyle(.gray)
                 }
                 Spacer()
                 HStack(spacing: 2) {
                     Image(systemName: "star.fill")
-                    Text("4.0")
+                    Text("\(listing.rating) stars")
                 }
                 .foregroundColor(.yellow)
             }
             .font(.footnote)
         }
         .padding()
-        .contentShape(Rectangle()) // giữ vùng nhấn cho toàn bộ cell
+        .contentShape(Rectangle()) 
     }
 }
