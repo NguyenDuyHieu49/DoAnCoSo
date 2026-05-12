@@ -1,0 +1,21 @@
+{
+  "images" : [
+    {
+      "filename" : "Caravelle Saigon ~ Ho Chi Minh City, #Vietnam http___goo_gl_OSsjsp.jpeg",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
