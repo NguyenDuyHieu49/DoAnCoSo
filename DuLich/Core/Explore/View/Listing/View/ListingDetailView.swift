@@ -302,7 +302,6 @@ struct ListingDetailView: View {
         }
     }
 
-    // MARK: - Actions
 
     @MainActor
     private func placeBooking() async {
@@ -377,7 +376,7 @@ struct RoomDetailView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Mô tả phòng")
                     .font(.headline)
-                Text("Phòng gồm có \(listing.amenities), \(listing.features)")
+                Text("Phòng khách sạn được thiết kế theo phong cách hiện đại và sang trọng, mang lại cảm giác ấm cúng nhưng vẫn đầy đủ tiện nghi. Không gian phòng rộng rãi với giường lớn êm ái, chăn ga sạch sẽ và ánh đèn vàng dịu nhẹ tạo cảm giác thư giãn cho khách lưu trú. Cửa sổ lớn giúp đón ánh sáng tự nhiên và mở ra khung cảnh đẹp của thành phố. Trong phòng được trang bị đầy đủ các tiện ích như điều hòa, tivi màn hình phẳng, wifi tốc độ cao, minibar và bàn làm việc. Phòng tắm riêng hiện đại với vòi sen nước nóng, khăn tắm mềm mại và các vật dụng cá nhân cần thiết. Đây là lựa chọn lý tưởng cho cả khách du lịch và khách đi công tác muốn tận hưởng sự thoải mái và tiện nghi trong suốt thời gian lưu trú")
                     .font(.body)
                     .foregroundStyle(.secondary)
             }
