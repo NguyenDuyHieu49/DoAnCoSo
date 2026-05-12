@@ -8,7 +8,7 @@ extension Notification.Name {
     static let didCreateBooking = Notification.Name("didCreateBooking")
 }
 
-struct ListingDetailView_Isolated: View {
+struct ListingDetailView: View {
     @Environment(\.dismiss) private var dismiss
     let listing: Listing
 

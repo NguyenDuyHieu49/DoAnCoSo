@@ -30,7 +30,7 @@ struct RootView: View {
                 if !authState.isSignedIn { showSignIn = true }
             }) {
                 NavigationStack {
-                    SignInEmailView(showSignInView: $showSignIn)
+                    AuthenticationView(showSignInView: $showSignIn)
                         .interactiveDismissDisabled(true)
                 }
             }

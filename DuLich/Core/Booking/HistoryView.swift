@@ -1,5 +1,6 @@
 // HistoryView.swift
 import SwiftUI
+import FirebaseFirestore
 
 struct HistoryView: View {
     @StateObject private var vm = HistoryViewModel()
