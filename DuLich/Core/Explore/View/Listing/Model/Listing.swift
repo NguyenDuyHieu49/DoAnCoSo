@@ -25,8 +25,6 @@ struct Listing: Identifiable, Codable, Hashable{
     let type: ListingType
     var imageUrls: [String]
     let distance: Int
-    let description: String
-
 }
 
 enum ListingFeatures: Int, Codable, Identifiable, Hashable {
