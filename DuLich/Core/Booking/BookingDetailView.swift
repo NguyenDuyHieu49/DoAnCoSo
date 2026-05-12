@@ -3,19 +3,10 @@ import SwiftUI
 import MapKit
 import Combine
 import FirebaseAuth
-/// A view that displays details for a booking (DBBooking).
-/// Accepts either a DBBooking instance or a bookingId to fetch the booking.
-/// Requires BookingManager with `cancelBooking(bookingId:)` and optionally
-/// a fetch-by-id method if you want to initialize with an id.
 struct BookingDetailView: View {
-    // Provide either `booking` or `bookingId`. If both provided, `booking` is used.
     let booking: DBBooking?
-
-    // Optional: if you only have an id, set bookingId and the view will try to fetch it.
     let bookingId: String?
-
     @StateObject private var vm = BookingDetailViewModel()
-
     @Environment(\.dismiss) private var dismiss
 
     init(booking: DBBooking) {
@@ -188,7 +179,6 @@ struct BookingDetailView: View {
     }()
 }
 
-// MARK: - ViewModel for BookingDetailView
 @MainActor
 final class BookingDetailViewModel: ObservableObject {
     @Published var booking: DBBooking? = nil

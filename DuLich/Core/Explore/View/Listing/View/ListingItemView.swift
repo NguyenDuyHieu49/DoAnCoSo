@@ -19,7 +19,7 @@ struct ListingItemView: View {
                 Spacer()
                 HStack(spacing: 2) {
                     Image(systemName: "star.fill")
-                    Text("\(listing.rating) stars")
+                    Text("\(listing.rating, specifier: "%.1f") stars")
                 }
                 .foregroundColor(.yellow)
             }

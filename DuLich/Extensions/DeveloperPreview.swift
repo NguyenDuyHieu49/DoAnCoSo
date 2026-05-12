@@ -98,6 +98,31 @@ final class DeveloperPreview {
             type: .villa,
             imageUrls: ["nhatrang1","nhatrang2","nhatrang3","nhatrang4"],
             distance:  1280
+        ),
+        .init(
+            id: UUID().uuidString,
+            ownerUid: UUID().uuidString,
+            ownerName: "Mr. Sashimi Hihihi",
+            ownerImangUrl: "female-profile-photo",
+            pricePerNight: [
+                "Phòng Chủ tịch": 50000000,
+                "Phòng sang trọng": 30000000,
+                "Phòng VIP": 22000000,
+                "Phòng thường": 10000000
+            ],
+            latitude: 37.7749,
+            longitude: -122.4194,
+            address: "Da Nang",
+            city: "Da Nang",
+            title: "HAIAN Beach Hotel & Spa",
+            rating: 4.8,
+            district: "CA",
+            features: [.superHost, .selfCheckIn],
+            amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
+            type: .villa,
+            imageUrls: ["DaNang1","DaNang2","DaNang3","DaNang4"],
+            distance:  1280
         )
+
     ]
 }

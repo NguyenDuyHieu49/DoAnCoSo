@@ -361,7 +361,6 @@ struct ListingDetailView: View {
     }
 }
 
-// Room detail view (kept outside body)
 struct RoomDetailView: View {
     let roomName: String
     let price: Double
@@ -378,7 +377,7 @@ struct RoomDetailView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Mô tả phòng")
                     .font(.headline)
-                Text("Thông tin chi tiết về phòng, tiện nghi, số giường, diện tích, chính sách hủy, và các ghi chú khác.")
+                Text("Phòng gồm có \(listing.amenities), \(listing.features)")
                     .font(.body)
                     .foregroundStyle(.secondary)
             }
