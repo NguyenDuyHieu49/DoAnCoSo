@@ -11,7 +11,7 @@ struct ListingItemView: View {
 
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text("\(listing.city), \(listing.address)")
+                    Text("\(listing.address), \(listing.city)")
                         .fontWeight(.semibold)
                         .foregroundColor(.teal)
                     Text("\(listing.distance) km").foregroundStyle(.gray)

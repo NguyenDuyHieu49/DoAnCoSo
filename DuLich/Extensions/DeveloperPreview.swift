@@ -146,30 +146,6 @@ final class DeveloperPreview {
             type: .villa,
             imageUrls: ["Saigon1","Saigon2","Saigon3","Saigon4"],
             distance:  1600
-        ),
-        .init(
-            id: UUID().uuidString,
-            ownerUid: UUID().uuidString,
-            ownerName: "Mr. Sashimi Hihihi",
-            ownerImangUrl: "female-profile-photo",
-            pricePerNight: [
-                "Phòng Chủ tịch": 50000000,
-                "Phòng sang trọng": 30000000,
-                "Phòng VIP": 22000000,
-                "Phòng thường": 10000000
-            ],
-            latitude: 37.7749,
-            longitude: -122.4194,
-            address: "Ha Long",
-            city: "Quang Ninh",
-            title: "WyndHam Legend Ha Long",
-            rating: 4.8,
-            district: "CA",
-            features: [.superHost, .selfCheckIn],
-            amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
-            type: .villa,
-            imageUrls: ["HaLong1","HaLong2","HaLong3","HaLong4"],
-            distance:  166
         )
     ]
 }
