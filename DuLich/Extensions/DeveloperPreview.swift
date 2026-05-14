@@ -9,10 +9,9 @@ final class DeveloperPreview {
             ownerName: "Ms. Lê Thu Thuỷ",
             ownerImangUrl: "samson1",
             pricePerNight: [
-                "Phòng Chủ tịch": 50000000,
-                "Phòng sang trọng": 30000000,
-                "Phòng VIP": 10000000,
-                "Phòng thường": 5000000
+                "Phòng Ban công": 50000000,
+                "Phòng Bình thường": 200,
+                "Phòng VIP": 10000000
             ],
             latitude: 37.7749,
             longitude: -122.4194,
