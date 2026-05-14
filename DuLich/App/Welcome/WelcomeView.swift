@@ -105,9 +105,7 @@ struct WelcomeView: View {
             .navigationBarHidden(true)
             .sheet(isPresented: $showSignIn) {
                 NavigationStack {
-                    // PASS the onSignInSuccess closure so WelcomeView can finish onboarding
                     AuthenticationView(showSignInView: $showSignIn, onSignInSuccess: {
-                        // Mark onboarding finished and notify DuLichApp via onFinish
                         UserDefaults.standard.set(true, forKey: "hasSeenWelcome")
                         onFinish?()
                         print("WelcomeView: onSignInSuccess called — onboarding finished")

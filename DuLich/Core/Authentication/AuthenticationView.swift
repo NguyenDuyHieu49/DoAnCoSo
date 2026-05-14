@@ -11,7 +11,6 @@ struct AuthenticationView: View {
 
     @EnvironmentObject private var authState: AuthState
 
-    // NEW: closure to notify parent that sign-in succeeded
     var onSignInSuccess: (() -> Void)? = nil
 
     var body: some View {
@@ -49,9 +48,7 @@ struct AuthenticationView: View {
                         print("[AuthView] signInGoogle uid:", resultModel.uid)
                         Task { @MainActor in
                             authState.startListening()
-                            // Notify parent that onboarding can finish
                             onSignInSuccess?()
-                            // Close this view/sheet
                             showSignInView = false
                         }
                     } catch {

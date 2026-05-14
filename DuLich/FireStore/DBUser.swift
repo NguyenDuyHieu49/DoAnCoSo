@@ -16,6 +16,7 @@ struct DBUser: Identifiable, Hashable, Codable {
     var dateCreated: Date?
     var phoneNumber: String?
     var bio: String?
+    var location: String?
 
     // Backwards compatibility: alias for older code that used `photoUrl`
     var photoUrl: String? {
@@ -33,7 +34,8 @@ struct DBUser: Identifiable, Hashable, Codable {
          displayName: String? = nil,
          phoneNumber: String? = nil,
          bio: String? = nil,
-         providerId: String? = nil) {
+         providerId: String? = nil,
+         location: String? = nil) {
         self.userId = userid
         self.isAnonymous = isAnonymous
         self.email = email
@@ -44,6 +46,7 @@ struct DBUser: Identifiable, Hashable, Codable {
         self.phoneNumber = phoneNumber
         self.bio = bio
         self.providerId = providerId
+        self.location = location
     }
 
     // Preferred initializer
@@ -56,7 +59,8 @@ struct DBUser: Identifiable, Hashable, Codable {
          dateCreated: Date? = nil,
          phoneNumber: String? = nil,
          displayName: String? = nil,
-         bio: String? = nil) {
+         bio: String? = nil,
+         location: String? = nil) {
         self.userId = userId
         self.isAnonymous = isAnonymous
         self.email = email
@@ -67,6 +71,7 @@ struct DBUser: Identifiable, Hashable, Codable {
         self.phoneNumber = phoneNumber
         self.displayName = displayName
         self.bio = bio
+        self.location = location
     }
 
     // Init from Firestore document data
@@ -80,6 +85,7 @@ struct DBUser: Identifiable, Hashable, Codable {
         self.isPremium = data["isPremium"] as? Bool ?? false
         self.phoneNumber = data["phoneNumber"] as? String
         self.bio = data["bio"] as? String
+        self.location = data["location"] as? String
 
         if let ts = data["dateCreated"] as? Timestamp {
             self.dateCreated = ts.dateValue()
@@ -113,6 +119,7 @@ struct DBUser: Identifiable, Hashable, Codable {
             dict["dateCreated"] = FieldValue.serverTimestamp()
         }
         return dict
+        if let location { dict["location"] = location }
     }
 
     // Convenience initializer from Firebase Auth user
@@ -127,6 +134,7 @@ struct DBUser: Identifiable, Hashable, Codable {
         self.dateCreated = nil
         self.phoneNumber = authUser.phoneNumber
         self.bio = nil
+        self.location = nil
     }
 
     // Hashable / Equatable by userId
