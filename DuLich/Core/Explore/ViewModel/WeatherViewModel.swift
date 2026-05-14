@@ -102,5 +102,6 @@ extension WeatherViewModel {
         case "Mist", "Fog", "Haze": return "gray"
         default: return "orange"
         }
+            
     }
 }

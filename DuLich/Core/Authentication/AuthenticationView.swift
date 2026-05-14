@@ -14,59 +14,193 @@ struct AuthenticationView: View {
     var onSignInSuccess: (() -> Void)? = nil
 
     var body: some View {
-        VStack(spacing: 16) {
-            Button(action: {
-                Task {
-                    do {
-                        let result = try await viewModel.signInAnonymous()
-                        print("[AuthView] anonymous uid:", result.uid)
-                        Task { @MainActor in
-                            authState.startListening()
-                            // Notify parent and close
-                            onSignInSuccess?()
-                            showSignInView = false
+        ZStack {
+            // Background gradient
+            LinearGradient(
+                colors: [
+                    Color(red: 0.55, green: 0.75, blue: 1.0),
+                    Color(red: 0.75, green: 0.88, blue: 1.0),
+                    Color(red: 0.88, green: 0.93, blue: 1.0)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            // Decorative blurred orbs
+            Circle()
+                .fill(Color.white.opacity(0.35))
+                .frame(width: 280, height: 280)
+                .blur(radius: 65)
+                .offset(x: -110, y: -220)
+
+            Circle()
+                .fill(Color(red: 0.4, green: 0.65, blue: 1.0).opacity(0.28))
+                .frame(width: 220, height: 220)
+                .blur(radius: 55)
+                .offset(x: 130, y: 200)
+
+            Circle()
+                .fill(Color.white.opacity(0.2))
+                .frame(width: 160, height: 160)
+                .blur(radius: 40)
+                .offset(x: 60, y: -60)
+
+            ScrollView {
+                VStack(spacing: 0) {
+                    // Header
+                    VStack(spacing: 10) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.white.opacity(0.22))
+                                .frame(width: 88, height: 88)
+                                .blur(radius: 2)
+
+                            Image(systemName: "person.2.circle.fill")
+                                .font(.system(size: 52, weight: .thin))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [Color.white, Color.white.opacity(0.75)],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                                .shadow(color: Color.blue.opacity(0.3), radius: 12, x: 0, y: 6)
                         }
-                    } catch {
-                        print("Anonymous sign-in error:", error.localizedDescription)
+                        .padding(.bottom, 4)
+
+                        Text("Chào mừng")
+                            .font(.system(size: 30, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                            .shadow(color: Color.blue.opacity(0.25), radius: 4, x: 0, y: 2)
+
+                        Text("Chọn phương thức đăng nhập")
+                            .font(.system(size: 15, weight: .regular, design: .rounded))
+                            .foregroundColor(.white.opacity(0.8))
                     }
-                }
-            }) {
-                authButtonLabel(title: "Đăng nhập với tư cách khách", systemImage: "person.crop.circle")
-            }
+                    .padding(.top, 64)
+                    .padding(.bottom, 44)
 
-            NavigationLink {
-                SignInEmailView(showSignInView: $showSignInView)
-                    .environmentObject(authState)
-            } label: {
-                authButtonLabel(title: "Đăng nhập với Email", systemImage: "envelope")
-            }
+                    // Glass card
+                    VStack(spacing: 14) {
 
-            Button {
-                Task {
-                    do {
-                        let resultModel = try await viewModel.signInGoogle()
-                        print("[AuthView] signInGoogle uid:", resultModel.uid)
-                        Task { @MainActor in
-                            authState.startListening()
-                            onSignInSuccess?()
-                            showSignInView = false
+                        // Anonymous button
+                        Button(action: {
+                            Task {
+                                do {
+                                    let result = try await viewModel.signInAnonymous()
+                                    print("[AuthView] anonymous uid:", result.uid)
+                                    Task { @MainActor in
+                                        authState.startListening()
+                                        onSignInSuccess?()
+                                        showSignInView = false
+                                    }
+                                } catch {
+                                    print("Anonymous sign-in error:", error.localizedDescription)
+                                }
+                            }
+                        }) {
+                            authButtonLabel(
+                                title: "Đăng nhập với tư cách khách",
+                                systemImage: "person.crop.circle",
+                                style: .secondary
+                            )
                         }
-                    } catch {
-                        print("Google sign-in error:", error.localizedDescription)
-                    }
-                }
-            } label: {
-                authButtonLabel(title: "Đăng nhập với Google", imageName: "google")
-            }
 
-            Spacer()
+                        // Divider
+                        HStack(spacing: 12) {
+                            Rectangle()
+                                .fill(Color.white.opacity(0.4))
+                                .frame(height: 1)
+                            Text("hoặc")
+                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .foregroundColor(.white.opacity(0.65))
+                                .fixedSize()
+                            Rectangle()
+                                .fill(Color.white.opacity(0.4))
+                                .frame(height: 1)
+                        }
+                        .padding(.vertical, 2)
+
+                        // Email NavigationLink
+                        NavigationLink {
+                            SignInEmailView(showSignInView: $showSignInView)
+                                .environmentObject(authState)
+                        } label: {
+                            authButtonLabel(
+                                title: "Đăng nhập với Email",
+                                systemImage: "envelope.fill",
+                                style: .primary
+                            )
+                        }
+
+                        // Google button
+                        Button {
+                            Task {
+                                do {
+                                    let resultModel = try await viewModel.signInGoogle()
+                                    print("[AuthView] signInGoogle uid:", resultModel.uid)
+                                    Task { @MainActor in
+                                        authState.startListening()
+                                        onSignInSuccess?()
+                                        showSignInView = false
+                                    }
+                                } catch {
+                                    print("Google sign-in error:", error.localizedDescription)
+                                }
+                            }
+                        } label: {
+                            authButtonLabel(
+                                title: "Đăng nhập với Google",
+                                imageName: "google",
+                                style: .google
+                            )
+                        }
+                    }
+                    .padding(24)
+                    .background(
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                                .fill(.ultraThinMaterial)
+
+                            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                                .fill(Color.white.opacity(0.18))
+
+                            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(0.7),
+                                            Color.white.opacity(0.15),
+                                            Color.white.opacity(0.05)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        }
+                    )
+                    .shadow(color: Color(red: 0.2, green: 0.4, blue: 0.8).opacity(0.18), radius: 30, x: 0, y: 16)
+                    .padding(.horizontal, 24)
+
+                    Spacer(minLength: 40)
+                }
+            }
         }
-        .padding()
-        .navigationTitle("Đăng nhập")
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Đăng nhập")
+                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .foregroundColor(.white)
+            }
+        }
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .onReceive(authState.$isSignedIn) { signedIn in
             if signedIn {
                 Task { @MainActor in
-                    // In case authState changes from elsewhere, ensure parent is notified and view closed
                     onSignInSuccess?()
                     showSignInView = false
                 }
@@ -74,33 +208,116 @@ struct AuthenticationView: View {
         }
     }
 
-    @ViewBuilder
-    private func authButtonLabel(title: String, systemImage: String? = nil, imageName: String? = nil) -> some View {
-        HStack {
-            if let system = systemImage {
-                Image(systemName: system)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-                    .padding(.leading, 8)
-            } else if let name = imageName {
-                Image(name)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-                    .padding(.leading, 8)
-            }
+    // MARK: - Button style enum
+    private enum ButtonStyle { case primary, secondary, google }
 
-            Spacer()
-            Text(title)
-                .font(.headline)
-                .fontWeight(.semibold)
-            Spacer()
+    @ViewBuilder
+    private func authButtonLabel(
+        title: String,
+        systemImage: String? = nil,
+        imageName: String? = nil,
+        style: ButtonStyle
+    ) -> some View {
+        ZStack {
+            // Background
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(buttonBackground(for: style))
+                .frame(height: 54)
+                .shadow(color: buttonShadow(for: style), radius: 8, x: 0, y: 4)
+
+            // Glass sheen
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.22), Color.white.opacity(0.0)],
+                        startPoint: .top,
+                        endPoint: .center
+                    )
+                )
+                .frame(height: 54)
+
+            // Border
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.45), lineWidth: 1)
+                .frame(height: 54)
+
+            // Content
+            HStack(spacing: 12) {
+                Group {
+                    if let system = systemImage {
+                        Image(systemName: system)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
+                            .foregroundColor(iconColor(for: style))
+                    } else if let name = imageName {
+                        Image(name)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
+                    }
+                }
+                .frame(width: 28)
+
+                Text(title)
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .foregroundColor(labelColor(for: style))
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(labelColor(for: style).opacity(0.5))
+            }
+            .padding(.horizontal, 18)
         }
-        .frame(height: 56)
-        .background(Color.white)
-        .cornerRadius(10)
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.3)))
+    }
+
+    private func buttonBackground(for style: ButtonStyle) -> AnyShapeStyle {
+        switch style {
+        case .primary:
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.2, green: 0.45, blue: 0.95),
+                        Color(red: 0.35, green: 0.6, blue: 1.0)
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+        case .secondary:
+            return AnyShapeStyle(Color.white.opacity(0.3))
+        case .google:
+            return AnyShapeStyle(Color.white.opacity(0.82))
+        }
+    }
+
+    private func buttonShadow(for style: ButtonStyle) -> Color {
+        switch style {
+        case .primary:
+            return Color(red: 0.2, green: 0.45, blue: 0.95).opacity(0.4)
+        case .secondary:
+            return Color.blue.opacity(0.1)
+        case .google:
+            return Color.black.opacity(0.08)
+        }
+    }
+
+    private func labelColor(for style: ButtonStyle) -> Color {
+        switch style {
+        case .primary: return .white
+        case .secondary: return .white
+        case .google: return Color(red: 0.15, green: 0.15, blue: 0.2)
+        }
+    }
+
+    private func iconColor(for style: ButtonStyle) -> Color {
+        switch style {
+        case .primary: return .white
+        case .secondary: return .white.opacity(0.9)
+        case .google: return Color(red: 0.15, green: 0.15, blue: 0.2)
+        }
     }
 }
 

@@ -214,8 +214,7 @@ final class BookingDetailViewModel: ObservableObject {
         }
 
         do {
-            // If you have a fetch-by-id method, call it. Otherwise fetch all and find by id.
-            // Try to use BookingManager.shared.fetchBooking(bookingId:) if available.
+            
             if let fetched = try await fetchBookingById(id: id) {
                 self.booking = fetched
                 parseMeta(from: fetched)
