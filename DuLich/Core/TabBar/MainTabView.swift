@@ -9,27 +9,30 @@ struct MainTabView: View {
             NavigationStack {
                 ExploreView()
             }
-            .tabItem { Label("Explore", systemImage: "safari") }
+            .tabItem { Label("Khám phá", systemImage: "safari") }
             .tag(AppTab.explore)
 
             NavigationStack {
                 HistoryView()
             }
-            .tabItem { Label("History", systemImage: "clock") }
+            .tabItem { Label("Lịch sử", systemImage: "clock") }
             .tag(AppTab.history)
 
             NavigationStack {
                 ProfileView()
             }
-            .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+            .tabItem { Label("Cá nhân", systemImage: "person.crop.circle") }
             .tag(AppTab.profile)
 
             NavigationStack {
                 SettingsView(showSignInView: $showSignInView)
             }
-            .tabItem { Label("Settings", systemImage: "gear") }
+            .tabItem { Label("Cài đặt", systemImage: "gear") }
             .tag(AppTab.settings)
         }
     }
 }
 
+#Preview {
+    MainTabView(selectedTab: .constant(.explore))
+}

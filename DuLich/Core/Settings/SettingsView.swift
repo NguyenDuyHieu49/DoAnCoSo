@@ -1,120 +1,296 @@
-//
-//  SettingsView.swift
-//  DuLich
-//
-//  Created by Macbook Pro on 7/5/26.
-//
-
+// SettingsView.swift
 import SwiftUI
 import Combine
 
 struct SettingsView: View {
-    
     @StateObject private var viewModel = SettingsViewModel()
     @Binding var showSignInView: Bool
+
     var body: some View {
-        List{
-            Button("Đăng xuất"){
-                Task{
-                    do{
-                        try viewModel.signOut()
-                        showSignInView = true
-                    } catch {
-                        print(error)
+        ZStack {
+            // Background gradient
+            LinearGradient(
+                colors: [
+                    Color(red: 0.55, green: 0.75, blue: 1.0),
+                    Color(red: 0.75, green: 0.88, blue: 1.0),
+                    Color(red: 0.88, green: 0.93, blue: 1.0)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            // Decorative orbs
+            Circle()
+                .fill(Color.white.opacity(0.32))
+                .frame(width: 270, height: 270)
+                .blur(radius: 62)
+                .offset(x: -110, y: -200)
+
+            Circle()
+                .fill(Color(red: 0.4, green: 0.65, blue: 1.0).opacity(0.25))
+                .frame(width: 210, height: 210)
+                .blur(radius: 52)
+                .offset(x: 130, y: 230)
+
+            ScrollView {
+                VStack(spacing: 20) {
+
+                    // Account section
+                    glassSection {
+                        VStack(spacing: 0) {
+                            sectionHeader(title: "Tài khoản", icon: "person.circle.fill")
+
+                            settingsButton(
+                                title: "Đăng xuất",
+                                icon: "arrow.right.circle",
+                                iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
+                                showDivider: true
+                            ) {
+                                Task {
+                                    do {
+                                        try viewModel.signOut()
+                                        showSignInView = true
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                            }
+
+                            settingsButton(
+                                title: "Xoá tài khoản",
+                                icon: "trash.circle",
+                                iconColor: Color(red: 0.85, green: 0.15, blue: 0.15),
+                                labelColor: Color(red: 0.85, green: 0.15, blue: 0.15),
+                                showDivider: false
+                            ) {
+                                Task {
+                                    do {
+                                        try await viewModel.deleteAccount()
+                                        showSignInView = true
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
-            }
-            Button(role: .destructive) {
-                Task{
-                    do{
-                        try await viewModel.deleteAccount()
-                        showSignInView = true
-                    } catch {
-                        print(error)
+
+                    // Email section
+                    if viewModel.authProviders.contains(.email) {
+                        glassSection {
+                            VStack(spacing: 0) {
+                                sectionHeader(title: "Email", icon: "envelope.circle.fill")
+
+                                settingsButton(
+                                    title: "Thiết lập lại mật khẩu",
+                                    icon: "key.horizontal",
+                                    iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
+                                    showDivider: true
+                                ) {
+                                    Task {
+                                        do {
+                                            try await viewModel.resetPassword()
+                                            print("Đã thiết lập lại mật khẩu")
+                                        } catch {
+                                            print(error)
+                                        }
+                                    }
+                                }
+
+                                settingsButton(
+                                    title: "Cập nhật mật khẩu",
+                                    icon: "lock.rotation",
+                                    iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
+                                    showDivider: true
+                                ) {
+                                    Task {
+                                        do {
+                                            try await viewModel.updatePassword()
+                                        } catch {
+                                            print(error)
+                                        }
+                                    }
+                                }
+
+                                settingsButton(
+                                    title: "Cập nhật Email",
+                                    icon: "envelope.badge",
+                                    iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
+                                    showDivider: false
+                                ) {
+                                    Task {
+                                        do {
+                                            try await viewModel.updateEmail()
+                                        } catch {
+                                            print(error)
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
+
+                    // Anonymous section
+                    if viewModel.authUser?.isAnonymous == true {
+                        glassSection {
+                            VStack(spacing: 0) {
+                                sectionHeader(title: "Liên kết tài khoản", icon: "link.circle.fill")
+
+                                settingsButton(
+                                    title: "Liên kết với Google",
+                                    icon: "globe",
+                                    iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
+                                    showDivider: true
+                                ) {
+                                    Task {
+                                        do {
+                                            try await viewModel.linkGoogleAccount()
+                                            print("Liên kết thành công")
+                                        } catch {
+                                            print(error)
+                                        }
+                                    }
+                                }
+
+                                settingsButton(
+                                    title: "Liên kết với Email",
+                                    icon: "envelope",
+                                    iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
+                                    showDivider: false
+                                ) {
+                                    Task {
+                                        do {
+                                            try await viewModel.linkEmailAccount()
+                                            print("Liên kết thành công")
+                                        } catch {
+                                            print(error)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(minLength: 32)
                 }
-            }label: {
-                    Text("Xoá tài khoản")
-            }
-            
-            if viewModel.authProviders.contains(.email){
-                emailSection
-            }
-            
-            
-            if viewModel.authUser?.isAnonymous == true {
-                anonymousSection
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
             }
         }
-        .onAppear{
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Cài đặt")
+                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .foregroundColor(.white)
+            }
+        }
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .onAppear {
             viewModel.loadAuthProviders()
             viewModel.loadAuthUser()
         }
-        .navigationTitle(Text("Cài đặt"))
     }
-}
 
-#Preview {
-    NavigationStack{
-        SettingsView(showSignInView: .constant(false))
+    // MARK: - Glass section container
+    @ViewBuilder
+    private func glassSection<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(.ultraThinMaterial)
+
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Color.white.opacity(0.18))
+
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.65),
+                            Color.white.opacity(0.1)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.2
+                )
+
+            VStack(spacing: 0) {
+                content()
+            }
+            .padding(.vertical, 4)
+        }
+        .shadow(color: Color(red: 0.2, green: 0.4, blue: 0.8).opacity(0.12), radius: 14, x: 0, y: 7)
+    }
+
+    // MARK: - Section header
+    private func sectionHeader(title: String, icon: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(Color(red: 0.2, green: 0.45, blue: 0.95).opacity(0.8))
+            Text(title)
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .foregroundColor(Color(red: 0.3, green: 0.3, blue: 0.5).opacity(0.8))
+                .textCase(.uppercase)
+                .tracking(0.6)
+            Spacer()
+        }
+        .padding(.horizontal, 18)
+        .padding(.top, 14)
+        .padding(.bottom, 8)
+    }
+
+    // MARK: - Settings row button
+    private func settingsButton(
+        title: String,
+        icon: String,
+        iconColor: Color,
+        labelColor: Color = Color(red: 0.1, green: 0.1, blue: 0.25),
+        showDivider: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        VStack(spacing: 0) {
+            Button(action: action) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(iconColor.opacity(0.12))
+                            .frame(width: 34, height: 34)
+                        Image(systemName: icon)
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(iconColor)
+                    }
+
+                    Text(title)
+                        .font(.system(size: 15, weight: .medium, design: .rounded))
+                        .foregroundColor(labelColor)
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(Color(red: 0.5, green: 0.5, blue: 0.65).opacity(0.5))
+                }
+                .padding(.horizontal, 18)
+                .padding(.vertical, 12)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            if showDivider {
+                Divider()
+                    .background(Color.white.opacity(0.5))
+                    .padding(.leading, 66)
+                    .padding(.trailing, 18)
+            }
+        }
     }
 }
-extension SettingsView{
-    private var emailSection: some View{
-        Section(header: Text("Email")) {
-            Button("Thiết lập lại mật khẩu"){
-                Task{
-                    do{
-                        try await viewModel.resetPassword()
-                        print("Đã thiết lập lại mật khẩu")
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-            Button("Cập nhật mật khẩu"){
-                Task{
-                    do{
-                        try await viewModel.updatePassword()
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-            Button("Cập nhật Email"){
-                Task{
-                    do{
-                        try await viewModel.updateEmail()
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-        }
-    }
-    
-    private var anonymousSection: some View{
-        Section(header: Text("Liên kết với tài khoản đã có")) {
-            Button("Liên kết với tài khoản Google"){
-                Task{
-                    do{
-                        try await viewModel.linkGoogleAccount()
-                        print("Liên kết thành công")
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-            Button("Liên kết với Email"){
-                Task{
-                    do{
-                        try await viewModel.linkEmailAccount()
-                        print("Liên kết thành công")
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-        }
+#Preview {
+    NavigationStack {
+        SettingsView(showSignInView: .constant(false))
     }
 }
