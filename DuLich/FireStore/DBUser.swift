@@ -3,6 +3,12 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 
+// MARK: - User Role
+enum UserRole: String, Codable {
+    case user  = "user"
+    case admin = "admin"
+}
+
 struct DBUser: Identifiable, Hashable, Codable {
     let userId: String
     var id: String { userId }
@@ -17,14 +23,16 @@ struct DBUser: Identifiable, Hashable, Codable {
     var phoneNumber: String?
     var bio: String?
     var location: String?
+    var role: UserRole
 
-    // Backwards compatibility: alias for older code that used `photoUrl`
     var photoUrl: String? {
         get { avatarURL }
         set { avatarURL = newValue }
     }
 
-    // Compatibility initializer used in older call sites (userid, photoUrl)
+    var isAdmin: Bool { role == .admin }
+
+    // Compatibility initializer
     init(userid: String,
          isAnonymous: Bool = false,
          email: String? = nil,
@@ -35,7 +43,8 @@ struct DBUser: Identifiable, Hashable, Codable {
          phoneNumber: String? = nil,
          bio: String? = nil,
          providerId: String? = nil,
-         location: String? = nil) {
+         location: String? = nil,
+         role: UserRole = .user) {
         self.userId = userid
         self.isAnonymous = isAnonymous
         self.email = email
@@ -47,6 +56,7 @@ struct DBUser: Identifiable, Hashable, Codable {
         self.bio = bio
         self.providerId = providerId
         self.location = location
+        self.role = role
     }
 
     // Preferred initializer
@@ -60,7 +70,8 @@ struct DBUser: Identifiable, Hashable, Codable {
          phoneNumber: String? = nil,
          displayName: String? = nil,
          bio: String? = nil,
-         location: String? = nil) {
+         location: String? = nil,
+         role: UserRole = .user) {
         self.userId = userId
         self.isAnonymous = isAnonymous
         self.email = email
@@ -72,9 +83,10 @@ struct DBUser: Identifiable, Hashable, Codable {
         self.displayName = displayName
         self.bio = bio
         self.location = location
+        self.role = role
     }
 
-    // Init from Firestore document data
+    // Init from Firestore data
     init(id: String, data: [String: Any]) throws {
         self.userId = id
         self.email = data["email"] as? String
@@ -86,7 +98,11 @@ struct DBUser: Identifiable, Hashable, Codable {
         self.phoneNumber = data["phoneNumber"] as? String
         self.bio = data["bio"] as? String
         self.location = data["location"] as? String
-
+        if let roleStr = data["role"] as? String, let r = UserRole(rawValue: roleStr) {
+            self.role = r
+        } else {
+            self.role = .user
+        }
         if let ts = data["dateCreated"] as? Timestamp {
             self.dateCreated = ts.dateValue()
         } else if let d = data["dateCreated"] as? Date {
@@ -98,31 +114,27 @@ struct DBUser: Identifiable, Hashable, Codable {
         }
     }
 
-    // Convert to dictionary for Firestore
     func toDict() -> [String: Any] {
         var dict: [String: Any] = [
             "isAnonymous": isAnonymous,
-            "isPremium": isPremium
+            "isPremium": isPremium,
+            "role": role.rawValue
         ]
-        if let email { dict["email"] = email }
+        if let email       { dict["email"]       = email }
         if let displayName { dict["displayName"] = displayName }
-        if let avatarURL {
-            dict["avatarURL"] = avatarURL
-            dict["photoUrl"] = avatarURL // legacy key
-        }
-        if let providerId { dict["providerId"] = providerId }
+        if let avatarURL   { dict["avatarURL"] = avatarURL; dict["photoUrl"] = avatarURL }
+        if let providerId  { dict["providerId"]  = providerId }
         if let phoneNumber { dict["phoneNumber"] = phoneNumber }
-        if let bio { dict["bio"] = bio }
+        if let bio         { dict["bio"]         = bio }
+        if let location    { dict["location"]    = location }
         if let dateCreated {
             dict["dateCreated"] = Timestamp(date: dateCreated)
         } else {
             dict["dateCreated"] = FieldValue.serverTimestamp()
         }
         return dict
-        if let location { dict["location"] = location }
     }
 
-    // Convenience initializer from Firebase Auth user
     init(from authUser: User) {
         self.userId = authUser.uid
         self.email = authUser.email
@@ -135,9 +147,9 @@ struct DBUser: Identifiable, Hashable, Codable {
         self.phoneNumber = authUser.phoneNumber
         self.bio = nil
         self.location = nil
+        self.role = .user
     }
 
-    // Hashable / Equatable by userId
     func hash(into hasher: inout Hasher) { hasher.combine(userId) }
     static func == (lhs: DBUser, rhs: DBUser) -> Bool { lhs.userId == rhs.userId }
 }

@@ -8,8 +8,8 @@ struct RootView: View {
 
     var body: some View {
         MainTabView(selectedTab: $selectedTab)
+            .environmentObject(authState) 
             .task {
-                // Khởi tạo trạng thái khi view xuất hiện
                 print("RootView.task — authState.isSignedIn:", authState.isSignedIn)
                 showSignIn = !authState.isSignedIn
                 if authState.isSignedIn {

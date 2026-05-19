@@ -1,38 +1,51 @@
-// MainTabView.swift
 import SwiftUI
 
 struct MainTabView: View {
     @Binding var selectedTab: AppTab
-    @State private var showSignInView = false 
+    @EnvironmentObject private var authState: AuthState
+    @State private var showSignInView = false
+
     var body: some View {
+        let _ = print("[MainTabView] isAdmin:", authState.isAdmin, "userRole:", authState.userRole)
         TabView(selection: $selectedTab) {
-            NavigationStack {
-                ExploreView()
-            }
-            .tabItem { Label("Khám phá", systemImage: "safari") }
-            .tag(AppTab.explore)
 
-            NavigationStack {
-                HistoryView()
-            }
-            .tabItem { Label("Lịch sử", systemImage: "clock") }
-            .tag(AppTab.history)
+            if authState.isAdmin {
+                NavigationStack {
+                    AdminDashboardView()          
+                }
+                .tabItem { Label("Quản lý", systemImage: "shield.checkered") }
+                .tag(AppTab.explore)
 
-            NavigationStack {
-                ProfileView()
-            }
-            .tabItem { Label("Cá nhân", systemImage: "person.crop.circle") }
-            .tag(AppTab.profile)
+                NavigationStack {
+                    SettingsView(showSignInView: $showSignInView)
+                }
+                .tabItem { Label("Settings", systemImage: "gear") }
+                .tag(AppTab.settings)
 
-            NavigationStack {
-                SettingsView(showSignInView: $showSignInView)
+            } else {
+                // ── USER TABS ───────────────────────────────
+                NavigationStack { ExploreView() }
+                .tabItem { Label("Explore", systemImage: "safari") }
+                .tag(AppTab.explore)
+
+                NavigationStack { HistoryView() }
+                .tabItem { Label("History", systemImage: "clock") }
+                .tag(AppTab.history)
+
+                NavigationStack { ProfileView() }
+                .tabItem { Label("Personal", systemImage: "person.crop.circle") }
+                .tag(AppTab.profile)
+
+                NavigationStack {
+                    SettingsView(showSignInView: $showSignInView)
+                }
+                .tabItem { Label("Settings", systemImage: "gear") }
+                .tag(AppTab.settings)
             }
-            .tabItem { Label("Cài đặt", systemImage: "gear") }
-            .tag(AppTab.settings)
+        }
+        // Khi role thay đổi → reset tab về đầu
+        .onChange(of: authState.isAdmin) { _ in
+            selectedTab = .explore
         }
     }
-}
-
-#Preview {
-    MainTabView(selectedTab: .constant(.explore))
 }

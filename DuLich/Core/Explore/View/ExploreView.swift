@@ -1,9 +1,5 @@
-//
-//  ExploreView.swift
-//  DuLich
-//
-//  Redesigned with Glassmorphism – iOS light theme
-//
+// ExploreView.swift
+// Thêm nút "+" cho Admin để mở AddHotelView
 
 import SwiftUI
 import Combine
@@ -13,6 +9,9 @@ struct ExploreView: View {
     @StateObject var viewModel = ExploreViewModel(service: ExploreService())
     @StateObject var weatherVM = WeatherViewModel()
     @State private var showWeatherDetail = false
+    @State private var showAddHotel = false         // ← Admin: show AddHotelView
+
+    @EnvironmentObject private var authState: AuthState
 
     var body: some View {
         NavigationStack {
@@ -21,75 +20,80 @@ struct ExploreView: View {
                     viewModel.searchDestination(query)
                 }
             } else {
-                ZStack(alignment: .top) {
-                    // Nền gradient toàn màn hình
-                    LinearGradient(
-                        colors: [
-                            Color(red: 0.52, green: 0.76, blue: 0.96),
-                            Color(red: 0.78, green: 0.91, blue: 1.00),
-                            Color(red: 0.93, green: 0.96, blue: 1.00)
-                        ],
-                        startPoint: .top,
-                        endPoint: .center
-                    )
-                    .ignoresSafeArea()
+                ZStack(alignment: .bottomTrailing) {
 
-                    ScrollView(showsIndicators: false) {
-                        VStack(spacing: 16) {
+                    // ── Main background ──────────────────────────────────
+                    ZStack(alignment: .top) {
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.52, green: 0.76, blue: 0.96),
+                                Color(red: 0.78, green: 0.91, blue: 1.00),
+                                Color(red: 0.93, green: 0.96, blue: 1.00)
+                            ],
+                            startPoint: .top,
+                            endPoint: .center
+                        )
+                        .ignoresSafeArea()
 
-                            // Search bar
-                            GlassSearchBar()
-                                .onTapGesture {
-                                    withAnimation(.snappy) {
-                                        showDestinationSearch.toggle()
+                        ScrollView(showsIndicators: false) {
+                            VStack(spacing: 16) {
+
+                                // Search bar
+                                GlassSearchBar()
+                                    .onTapGesture {
+                                        withAnimation(.snappy) {
+                                            showDestinationSearch.toggle()
+                                        }
+                                    }
+
+                                // Weather card
+                                WeatherCard(viewModel: weatherVM)
+                                    .onAppear {
+                                        Task { await weatherVM.fetchWeather(for: "Hanoi") }
+                                    }
+                                    .onTapGesture { showWeatherDetail = true }
+                                    .sheet(isPresented: $showWeatherDetail) {
+                                        WeatherDetailView(viewModel: weatherVM)
+                                    }
+
+                                // Section header
+                                HStack {
+                                    Text("Gợi ý cho bạn")
+                                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                                        .foregroundColor(Color(white: 0.12))
+                                    Spacer()
+                                    Text("\(viewModel.listings.count) địa điểm")
+                                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                                        .foregroundColor(Color(white: 0.45))
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.top, 4)
+
+                                // Listings
+                                LazyVStack(spacing: 16) {
+                                    ForEach(viewModel.listings) { listing in
+                                        NavigationLink(value: listing) {
+                                            ListingItemView(listing: listing)
+                                                .frame(height: 400)
+                                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                                .shadow(color: Color.black.opacity(0.10), radius: 12, x: 0, y: 6)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 20)
+                                                        .strokeBorder(Color.white.opacity(0.45), lineWidth: 0.8)
+                                                )
+                                        }
                                     }
                                 }
-
-                            // Weather card
-                            WeatherCard(viewModel: weatherVM)
-                                .onAppear {
-                                    Task { await weatherVM.fetchWeather(for: "Hanoi") }
-                                }
-                                .onTapGesture {
-                                    showWeatherDetail = true
-                                }
-                                .sheet(isPresented: $showWeatherDetail) {
-                                    WeatherDetailView(viewModel: weatherVM)
-                                }
-
-                            // Section header
-                            HStack {
-                                Text("Gợi ý cho bạn")
-                                    .font(.system(size: 17, weight: .semibold, design: .rounded))
-                                    .foregroundColor(Color(white: 0.12))
-                                Spacer()
-                                Text("\(viewModel.listings.count) địa điểm")
-                                    .font(.system(size: 12, weight: .medium, design: .rounded))
-                                    .foregroundColor(Color(white: 0.45))
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, authState.isAdmin ? 90 : 32)  // thêm padding khi có FAB
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.top, 4)
-
-                            // Listings
-                            LazyVStack(spacing: 16) {
-                                ForEach(viewModel.listings) { listing in
-                                    NavigationLink(value: listing) {
-                                        ListingItemView(listing: listing)
-                                            .frame(height: 400)
-                                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                                            // Glass card shadow
-                                            .shadow(color: Color.black.opacity(0.10), radius: 12, x: 0, y: 6)
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 20)
-                                                    .strokeBorder(Color.white.opacity(0.45), lineWidth: 0.8)
-                                            )
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.bottom, 32)
+                            .padding(.top, 12)
                         }
-                        .padding(.top, 12)
+                    }
+
+                    // ── Admin FAB: nút thêm khách sạn ────────────────────
+                    if authState.isAdmin {
+                        adminAddButton
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
@@ -99,18 +103,93 @@ struct ExploreView: View {
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(Color(white: 0.10))
                     }
+                    // Admin badge ở navigation bar
+                    if authState.isAdmin {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            adminBadge
+                        }
+                    }
                 }
                 .navigationDestination(for: Listing.self) { listing in
                     ListingDetailView(listing: listing)
                         .navigationBarBackButtonHidden()
                 }
+                .sheet(isPresented: $showAddHotel) {
+                    AddHotelView {
+                        // Reload listings sau khi thêm thành công
+                        Task { await viewModel.loadListings() }
+                    }
+                }
             }
         }
     }
+
+    // MARK: - Admin FAB
+    private var adminAddButton: some View {
+        Button {
+            showAddHotel = true
+        } label: {
+            ZStack {
+                // Shadow circle
+                Circle()
+                    .fill(Color(red: 0.15, green: 0.40, blue: 0.90).opacity(0.30))
+                    .frame(width: 64, height: 64)
+                    .blur(radius: 10)
+                    .offset(y: 4)
+
+                // Main button
+                Circle()
+                    .fill(LinearGradient(
+                        colors: [
+                            Color(red: 0.20, green: 0.48, blue: 0.98),
+                            Color(red: 0.35, green: 0.62, blue: 1.00)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                    .frame(width: 58, height: 58)
+                    .overlay(
+                        Circle().strokeBorder(Color.white.opacity(0.45), lineWidth: 1.2)
+                    )
+
+                // Glass sheen
+                Circle()
+                    .fill(LinearGradient(
+                        colors: [Color.white.opacity(0.30), Color.clear],
+                        startPoint: .top, endPoint: .center
+                    ))
+                    .frame(width: 58, height: 58)
+
+                Image(systemName: "plus")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundColor(.white)
+            }
+        }
+        .padding(.trailing, 20)
+        .padding(.bottom, 24)
+        .transition(.scale.combined(with: .opacity))
+    }
+
+    // MARK: - Admin Badge (toolbar)
+    private var adminBadge: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "shield.checkered")
+                .font(.system(size: 11, weight: .semibold))
+            Text("Admin")
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+        }
+        .foregroundColor(Color(red: 0.9, green: 0.65, blue: 0.1))
+        .padding(.horizontal, 9)
+        .padding(.vertical, 4)
+        .background(
+            Capsule()
+                .fill(Color(red: 1.0, green: 0.85, blue: 0.25).opacity(0.18))
+                .overlay(Capsule().strokeBorder(Color(red: 1.0, green: 0.8, blue: 0.2).opacity(0.5), lineWidth: 1))
+        )
+    }
 }
 
-// MARK: – Glass Search Bar
-// Thay thế SearchBar() gốc với phong cách glassmorphism
+// MARK: – Glass Search Bar (giữ nguyên)
 private struct GlassSearchBar: View {
     var body: some View {
         HStack(spacing: 10) {
@@ -124,7 +203,6 @@ private struct GlassSearchBar: View {
 
             Spacer()
 
-            // Filter pill
             HStack(spacing: 4) {
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 12, weight: .medium))
@@ -150,17 +228,13 @@ private struct GlassSearchBar: View {
         .background(
             RoundedRectangle(cornerRadius: 14)
                 .fill(.ultraThinMaterial)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .fill(Color.white.opacity(0.35))
-                )
+                .overlay(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.35)))
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
                         .strokeBorder(
                             LinearGradient(
                                 colors: [Color.white.opacity(0.80), Color.white.opacity(0.30)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+                                startPoint: .topLeading, endPoint: .bottomTrailing
                             ),
                             lineWidth: 0.8
                         )
@@ -174,4 +248,5 @@ private struct GlassSearchBar: View {
 
 #Preview {
     ExploreView()
+        .environmentObject(AuthState())
 }

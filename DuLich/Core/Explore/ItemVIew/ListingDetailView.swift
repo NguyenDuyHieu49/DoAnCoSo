@@ -34,7 +34,6 @@ private enum Glass {
     static let textTertiary  = Color(red: 0.55, green: 0.60, blue: 0.72)
 }
 
-// MARK: - GlassCard modifier
 struct GlassCard: ViewModifier {
     var radius: CGFloat = Glass.cornerLg
     var prominent: Bool = false
@@ -65,7 +64,6 @@ extension View {
     }
 }
 
-// MARK: - Section Header
 private struct SectionHeader: View {
     let title: String
     var body: some View {
@@ -76,7 +74,6 @@ private struct SectionHeader: View {
     }
 }
 
-// MARK: - Main View
 struct ListingDetailView: View {
     @Environment(\.dismiss) var dismiss
     let listing: Listing
@@ -166,7 +163,6 @@ struct ListingDetailView: View {
         }
     }
 
-    // MARK: - Hero
     @ViewBuilder
     private var heroSection: some View {
         ZStack(alignment: .topLeading) {
@@ -200,7 +196,6 @@ struct ListingDetailView: View {
         }
     }
 
-    // MARK: - Content stack
     @ViewBuilder
     private var contentStack: some View {
         VStack(spacing: 14) {
@@ -277,7 +272,6 @@ struct ListingDetailView: View {
         .glassCard(prominent: true)
     }
 
-    // MARK: - Reviews
     @ViewBuilder
     private var reviewsSection: some View {
         let displayReviews = reviews.isEmpty ? Self.sampleReviews : reviews
@@ -374,7 +368,6 @@ struct ListingDetailView: View {
         .glassCard(radius: Glass.cornerMd)
     }
 
-    // MARK: - Owner card
     private var ownerCard: some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 3) {
@@ -388,19 +381,24 @@ struct ListingDetailView: View {
                     .foregroundStyle(Glass.textPrimary)
             }
             Spacer()
-            Image(listing.ownerImangUrl)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 46, height: 46)
-                .clipShape(Circle())
-                .overlay(Circle().stroke(Glass.cardStroke2, lineWidth: 1))
-                .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 3)
-        }
+            AsyncImage(url: URL(string: listing.ownerImangUrl)) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                default:
+                    Circle().fill(Color(white: 0.85))
+                        .overlay(Image(systemName: "person.fill")
+                            .foregroundColor(Color(white: 0.6)))
+                }
+            }
+            .frame(width: 46, height: 46)
+            .clipShape(Circle())
+            .overlay(Circle().stroke(Glass.cardStroke2, lineWidth: 1))
+            .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 3)        }
         .padding(16)
         .glassCard()
     }
 
-    // MARK: - Features card
     private var featuresCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             SectionHeader(title: "Đặc điểm nổi bật")
@@ -431,7 +429,6 @@ struct ListingDetailView: View {
         .glassCard()
     }
 
-    // MARK: - Room selection
     @ViewBuilder
     private var roomSelectionCard: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -484,7 +481,6 @@ struct ListingDetailView: View {
         .glassCard()
     }
 
-    // MARK: - Date picker
     private var datepickerCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             SectionHeader(title: "Chọn ngày lưu trú")
@@ -534,7 +530,6 @@ struct ListingDetailView: View {
         .glassCard()
     }
 
-    // MARK: - Amenities
     private var amenitiesCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             SectionHeader(title: "Tiện ích được cung cấp")
@@ -564,7 +559,6 @@ struct ListingDetailView: View {
         .glassCard()
     }
 
-    // MARK: - Map
     private var mapCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionHeader(title: "Địa điểm")
@@ -585,7 +579,6 @@ struct ListingDetailView: View {
         .glassCard()
     }
 
-    // MARK: - Booking bar
     private var bookingBar: some View {
         VStack(spacing: 0) {
             Rectangle()
@@ -644,7 +637,6 @@ struct ListingDetailView: View {
         }
     }
 
-    // MARK: - Local helpers (unchanged logic)
     private func toggleLikeLocal(reviewId: String) {
         if let idx = reviews.firstIndex(where: { $0.id == reviewId }) {
             if reviews[idx].isLikedByCurrentUser {
@@ -669,7 +661,6 @@ struct ListingDetailView: View {
         }
     }
 
-    // MARK: - Place booking (unchanged logic)
     private func placeBooking() async {
         if isProcessing { return }
         await MainActor.run { isProcessing = true }
@@ -735,7 +726,6 @@ struct ListingDetailView: View {
         isComposingReview = false
     }
 
-    // MARK: - RoomDetailView (light glass)
     struct RoomDetailView: View {
         let roomName: String
         let price: Double

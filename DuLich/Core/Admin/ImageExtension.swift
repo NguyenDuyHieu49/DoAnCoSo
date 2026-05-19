@@ -1,0 +1,21 @@
+//
+//  ImageExtension.swift
+//  Hotelia
+//
+//  Created by Macbook Pro on 19/5/26.
+//
+
+// UIImage+Extensions.swift
+import UIKit
+
+extension UIImage {
+    /// Fix ảnh bị xoay khi chọn từ Files
+    func normalizedImage() -> UIImage {
+        if imageOrientation == .up { return self }
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        draw(in: CGRect(origin: .zero, size: size))
+        let normalized = UIGraphicsGetImageFromCurrentImageContext() ?? self
+        UIGraphicsEndImageContext()
+        return normalized
+    }
+}

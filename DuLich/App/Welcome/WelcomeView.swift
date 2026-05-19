@@ -2,7 +2,6 @@
 //  WelcomeView.swift
 //  DuLich
 //
-//  Redesigned with Glassmorphism – iOS light theme
 //
 
 import SwiftUI
@@ -56,12 +55,10 @@ struct WelcomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Nền gradient toàn màn hình
                 backgroundGradient
                     .ignoresSafeArea()
                     .animation(.easeInOut(duration: 0.6), value: selection)
 
-                // Orb trang trí
                 Circle()
                     .fill(Color.white.opacity(0.22))
                     .frame(width: 320, height: 320)
@@ -76,7 +73,6 @@ struct WelcomeView: View {
 
                 VStack(spacing: 0) {
 
-                    // MARK: – Pager ảnh
                     TabView(selection: $selection) {
                         ForEach(Array(pages.enumerated()), id: \.offset) { idx, page in
                             OnboardingPageView(page: page)
@@ -86,7 +82,6 @@ struct WelcomeView: View {
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     .frame(maxHeight: 420)
 
-                    // MARK: – Page dots tuỳ chỉnh
                     HStack(spacing: 8) {
                         ForEach(0..<pages.count, id: \.self) { i in
                             Capsule()
@@ -97,7 +92,6 @@ struct WelcomeView: View {
                     }
                     .padding(.top, 16)
 
-                    // MARK: – Text content
                     VStack(spacing: 8) {
                         Text(pages[selection].title)
                             .font(.system(size: 22, weight: .bold, design: .rounded))
