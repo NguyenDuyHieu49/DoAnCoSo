@@ -9,7 +9,6 @@
 import UIKit
 
 extension UIImage {
-    /// Fix ảnh bị xoay khi chọn từ Files
     func normalizedImage() -> UIImage {
         if imageOrientation == .up { return self }
         UIGraphicsBeginImageContextWithOptions(size, false, scale)

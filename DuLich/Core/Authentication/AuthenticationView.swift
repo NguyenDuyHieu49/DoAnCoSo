@@ -101,13 +101,12 @@ struct AuthenticationView: View {
                             }
                         }) {
                             authButtonLabel(
-                                title: "Đăng nhập với tư cách khách",
+                                title: "Khách",
                                 systemImage: "person.crop.circle",
                                 style: .secondary
                             )
                         }
 
-                        // Divider
                         HStack(spacing: 12) {
                             Rectangle()
                                 .fill(Color.white.opacity(0.4))
@@ -208,7 +207,6 @@ struct AuthenticationView: View {
         }
     }
 
-    // MARK: - Button style enum
     private enum ButtonStyle { case primary, secondary, google }
 
     @ViewBuilder

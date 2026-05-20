@@ -22,8 +22,8 @@ struct Listing: Identifiable, Codable, Hashable{
     let district: String
     var features: [ListingFeatures]
     var amenities: [ListingAmenities]
-    let type: ListingType
     var imageUrls: [String]
+    var description: String?
     let distance: Int
 }
 
@@ -59,7 +59,7 @@ enum ListingAmenities: Int, Codable, Identifiable, Hashable {
     case wifi
     case airConditioning
     case parking
-    case balcony
+    case tivi
     case pool
     
     var title: String {
@@ -67,7 +67,7 @@ enum ListingAmenities: Int, Codable, Identifiable, Hashable {
         case .pool: return "Swimming Pool"
         case .airConditioning: return "Air Conditioning"
         case .breakfast: return "Free Breakfast"
-        case .balcony: return "Balcony"
+        case .tivi: return "TV"
         case .parking: return "Parking"
         case .wifi: return "Free Wi-Fi"
         }
@@ -78,7 +78,7 @@ enum ListingAmenities: Int, Codable, Identifiable, Hashable {
         case .pool: return "figure.pool.swim.circle"
         case .airConditioning: return "air.conditioner.horizontal"
         case .breakfast: return "fork.knife.circle"
-        case .balcony: return "balcony"
+        case .tivi: return "tv"
         case .parking: return "parkingsign.circle.fill"
         case .wifi: return "wifi"
         }
@@ -87,17 +87,3 @@ enum ListingAmenities: Int, Codable, Identifiable, Hashable {
 
 }
 
-enum ListingType: Int, Codable, Identifiable, Hashable {
-    case apartment
-    case house
-    case villa
-    
-    var title: String {
-        switch self {
-        case .apartment: return "Apartment"
-        case .house: return "House"
-        case .villa: return "Villa"
-        }
-    }
-    var id: Int { return self.rawValue}
-}

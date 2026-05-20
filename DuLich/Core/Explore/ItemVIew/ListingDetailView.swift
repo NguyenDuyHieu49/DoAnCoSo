@@ -297,37 +297,65 @@ struct ListingDetailView: View {
         .padding(16)
         .glassCard()
     }
-
     private var featuresCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            SectionHeader(title: "Đặc điểm nổi bật")
-            ForEach(Array(listing.features.enumerated()), id: \.element.id) { idx, feature in
-                if idx > 0 {
-                    Rectangle().fill(Color(red: 0.70, green: 0.80, blue: 1.00).opacity(0.20)).frame(height: 0.6)
-                }
-                HStack(spacing: 12) {
-                    Image(systemName: feature.imageName)
-                        .font(.system(size: 16))
-                        .foregroundStyle(Glass.accent)
-                        .frame(width: 34, height: 34)
-                        .background(Glass.accentLight)
-                        .clipShape(RoundedRectangle(cornerRadius: 9))
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(feature.title)
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(Glass.textPrimary)
-                        Text(feature.subtitle)
-                            .font(.system(size: 12))
-                            .foregroundStyle(Glass.textTertiary)
+        VStack(alignment: .leading, spacing: 0) {
+                 VStack(alignment: .leading, spacing: 14) {
+                SectionHeader(title: "Đặc điểm nổi bật")
+                ForEach(Array(listing.features.enumerated()), id: \.element.id) { idx, feature in
+                    if idx > 0 {
+                        Rectangle()
+                            .fill(Color(red: 0.70, green: 0.80, blue: 1.00).opacity(0.20))
+                            .frame(height: 0.6)
                     }
-                    Spacer()
+                    HStack(spacing: 12) {
+                        Image(systemName: feature.imageName)
+                            .font(.system(size: 16))
+                            .foregroundStyle(Glass.accent)
+                            .frame(width: 34, height: 34)
+                            .background(Glass.accentLight)
+                            .clipShape(RoundedRectangle(cornerRadius: 9))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(feature.title)
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Glass.textPrimary)
+                            Text(feature.subtitle)
+                                .font(.system(size: 12))
+                                .foregroundStyle(Glass.textTertiary)
+                        }
+                        Spacer()
+                    }
+                }
+            }
+     
+            if let desc = listing.description, !desc.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                     Rectangle()
+                    .fill(Color(red: 0.70, green: 0.80, blue: 1.00).opacity(0.25))
+                    .frame(height: 0.6)
+                    .padding(.vertical, 14)
+     
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "text.alignleft")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Glass.accent)
+                        Text("Mô tả")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(Glass.textTertiary)
+                            .textCase(.uppercase)
+                            .tracking(0.6)
+                    }
+                    Text(desc)
+                        .font(.system(size: 14))
+                        .foregroundStyle(Glass.textSecondary)
+                        .lineSpacing(5)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
         }
         .padding(18)
         .glassCard()
     }
-
+     
     private var roomSelectionCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             SectionHeader(title: "Chọn loại phòng")

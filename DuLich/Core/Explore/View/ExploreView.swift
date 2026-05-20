@@ -85,7 +85,7 @@ struct ExploreView: View {
                                     }
                                 }
                                 .padding(.horizontal, 16)
-                                .padding(.bottom, authState.isAdmin ? 90 : 32)  // thêm padding khi có FAB
+                                .padding(.bottom, authState.isAdmin ? 90 : 32)  
                             }
                             .padding(.top, 12)
                         }

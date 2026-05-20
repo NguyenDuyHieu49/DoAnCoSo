@@ -22,7 +22,6 @@ final class DeveloperPreview {
             district: "CA",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
-            type: .villa,
             imageUrls: ["samson1","samson2","samson3","samson4"],
             distance: 200
         ),
@@ -45,7 +44,6 @@ final class DeveloperPreview {
             district: "CA",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
-            type: .villa,
             imageUrls: ["dalat1","dalat2","dalat3","dalat4"],
             distance: 1408
         ),
@@ -69,7 +67,6 @@ final class DeveloperPreview {
             district: "CA",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
-            type: .villa,
             imageUrls: ["phuquoc1","phuquoc2","phuquoc3","phuquoc4"],
             distance: 2017
         ),
@@ -92,7 +89,6 @@ final class DeveloperPreview {
             district: "CA",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
-            type: .villa,
             imageUrls: ["nhatrang1","nhatrang2","nhatrang3","nhatrang4"],
             distance:  1280
         ),
@@ -116,7 +112,6 @@ final class DeveloperPreview {
             district: "CA",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
-            type: .villa,
             imageUrls: ["DaNang1","DaNang2","DaNang3","DaNang4"],
             distance:  741
         ),
@@ -139,7 +134,6 @@ final class DeveloperPreview {
             district: "CA",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast,.airConditioning,.wifi,.pool,.parking],
-            type: .villa,
             imageUrls: ["Saigon1","Saigon2","Saigon3","Saigon4"],
             distance:  1600
         ),
@@ -162,7 +156,6 @@ final class DeveloperPreview {
             district: "Ba Dinh",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast, .airConditioning, .wifi, .pool, .parking],
-            type: .villa,
             imageUrls: ["hanoi1", "hanoi2", "hanoi3", "hanoi4"],
             distance: 20
         ),
@@ -185,7 +178,6 @@ final class DeveloperPreview {
             district: "Cam An",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast, .airConditioning, .wifi, .pool, .parking],
-            type: .villa,
             imageUrls: ["hoian1", "hoian2", "hoian3", "hoian4"],
             distance: 860
         ),
@@ -208,7 +200,6 @@ final class DeveloperPreview {
             district: "Ward 1",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast, .airConditioning, .wifi, .pool, .parking],
-            type: .villa,
             imageUrls: ["vungtau1", "vungtau2", "vungtau3", "vungtau4"],
             distance: 1750
         ),
@@ -231,7 +222,6 @@ final class DeveloperPreview {
             district: "Phu Hoi",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast, .airConditioning, .wifi, .pool, .parking],
-            type: .villa,
             imageUrls: ["hue1", "hue2", "hue3", "hue4"],
             distance: 1020
         ),
@@ -254,7 +244,6 @@ final class DeveloperPreview {
             district: "Ninh Kieu",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast, .airConditioning, .wifi, .pool, .parking],
-            type: .villa,
             imageUrls: ["cantho1", "cantho2", "cantho3", "cantho4"],
             distance: 2150
         ),
@@ -277,7 +266,6 @@ final class DeveloperPreview {
             district: "Ham Tien",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast, .airConditioning, .wifi, .pool, .parking],
-            type: .villa,
             imageUrls: ["muine1", "muine2", "muine3", "muine4"],
             distance: 1480
         ),
@@ -300,7 +288,6 @@ final class DeveloperPreview {
             district: "Ghenh Rang",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast, .airConditioning, .wifi, .pool, .parking],
-            type: .villa,
             imageUrls: ["quynhon1", "quynhon2", "quynhon3", "quynhon4"],
             distance: 1100
         ),
@@ -323,7 +310,6 @@ final class DeveloperPreview {
             district: "Sa Pa",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast, .airConditioning, .wifi, .pool, .parking],
-            type: .villa,
             imageUrls: ["sapa1", "sapa2", "sapa3", "sapa4"],
             distance: 2150
         ),
@@ -346,7 +332,6 @@ final class DeveloperPreview {
             district: "Con Dao",
             features: [.superHost, .selfCheckIn],
             amenities: [.breakfast, .airConditioning, .wifi, .pool, .parking],
-            type: .villa,
             imageUrls: ["condao1", "condao2", "condao3", "condao4"],
             distance: 1820
         )

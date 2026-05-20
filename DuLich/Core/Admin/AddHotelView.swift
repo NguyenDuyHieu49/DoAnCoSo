@@ -227,7 +227,6 @@ struct AddHotelView: View {
                 .font(.system(size: 12, design: .rounded))
                 .foregroundColor(Color(white: 0.5))
         }
-        // ── File picker ──────────────────────────────────────
         .fileImporter(
             isPresented: $showFilePicker,
             allowedContentTypes: [.image],
@@ -486,10 +485,35 @@ struct AddHotelView: View {
     }
 }
 
-extension ListingAmenities: CaseIterable {
+extension ListingFeatures: CaseIterable {
+    static var allCases: [ListingFeatures] {
+        return [.selfCheckIn, .superHost]
+    }
+
+    var iconName: String {
+        switch self {
+        case .selfCheckIn:
+            return "door.right.hand.open"
+        case .superHost:
+            return "star.fill"
     
+        }
+    }
+
+    var displayTitle: String {
+        switch self {
+        case .selfCheckIn:
+            return "Check-in tự động với 1 lần chạm"
+        case .superHost:
+            return "Khách sạn đạt chuẩn quốc tế"
+        }
+    }
+}
+
+ 
+extension ListingAmenities: CaseIterable {
     static var allCases: [ListingAmenities] {
-        return [.wifi, .airConditioning, .pool, .breakfast, .parking, .balcony]
+        return [.wifi, .airConditioning, .pool, .breakfast, .parking, .tivi]
     }
 
     var iconName: String {
@@ -504,8 +528,7 @@ extension ListingAmenities: CaseIterable {
             return "fork.knife"
         case .parking:
             return "car.fill"
-        case .balcony:
-            // Không có biểu tượng hệ thống tên "balcony" nên dùng biểu tượng thay thế phù hợp
+        case .tivi:
             return "rectangle.portrait"
         }
     }
@@ -522,8 +545,8 @@ extension ListingAmenities: CaseIterable {
             return "Bữa sáng"
         case .parking:
             return "Bãi đậu xe"
-        case .balcony:
-            return "Ban công"
+        case .tivi:
+            return "TV"
         }
     }
 }

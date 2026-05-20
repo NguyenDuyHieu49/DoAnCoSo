@@ -33,33 +33,47 @@ class ExploreService {
             let amenityInts = data["amenities"] as? [Int] ?? []
             let amenities = amenityInts.compactMap { ListingAmenities(rawValue: $0) }
 
-            // imageUrls: ưu tiên Storage URLs, fallback asset names
             let imageUrls = data["imageUrls"] as? [String] ?? []
+            let images: [String] = imageUrls.isEmpty ? ["placeholder"] : imageUrls
+
+            // Tách nhỏ các giá trị để giảm tải cho type-checker
+            let ownerUid: String = data["ownerUid"] as? String ?? ""
+            let ownerName: String = data["ownerName"] as? String ?? ""
+            let ownerImangUrl: String = imageUrls.first ?? ""
+            let latitude: Double = data["latitude"] as? Double ?? 0
+            let longitude: Double = data["longitude"] as? Double ?? 0
+            let address: String = data["address"] as? String ?? ""
+            let rating: Double = data["rating"] as? Double ?? 4.5
+            let district: String = data["district"] as? String ?? ""
+
+            let rawDistanceInt = data["distance"] as? Int
+            let rawDistanceDouble = data["distance"] as? Double
+            let distance: Int = {
+                if let i = rawDistanceInt { return i }
+                if let d = rawDistanceDouble { return Int(d) }
+                return 0
+            }()
 
             return Listing(
                 id:             id,
-                ownerUid:       data["ownerUid"]   as? String ?? "",
-                ownerName:      data["ownerName"]  as? String ?? "",
-                ownerImangUrl:  imageUrls.first    ?? "",
+                ownerUid:       ownerUid,
+                ownerName:      ownerName,
+                ownerImangUrl:  ownerImangUrl,
                 pricePerNight:  pricePerNight,
-                latitude:       data["latitude"]   as? Double ?? 0,
-                longitude:      data["longitude"]  as? Double ?? 0,
-                address:        data["address"]    as? String ?? "",
+                latitude:       latitude,
+                longitude:      longitude,
+                address:        address,
                 city:           city,
                 title:          title,
-                rating:         data["rating"]     as? Double ?? 4.5,
-                district:       data["district"]   as? String ?? "",
-                features:       [],                               // mở rộng sau nếu cần
+                rating:         rating,
+                district:       district,
+                features:       [],
                 amenities:      amenities,
-                type:           .villa,
-                imageUrls:      imageUrls.isEmpty ? ["placeholder"] : imageUrls,
-                distance:       data["distance"] as? Int
-                                ?? (data["distance"] as? Double).map { Int($0) }
-                                ?? 0
+                imageUrls:      images,
+                distance:       distance
             )
         }
 
-        // 2. Nếu Firestore có data → trả về, ngược lại fallback DeveloperPreview
         if !firestoreListings.isEmpty {
             return firestoreListings
         }

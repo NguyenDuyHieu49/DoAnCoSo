@@ -48,7 +48,6 @@ final class AdminHotelManager {
 struct HotelForm: Identifiable {
     var id: String = UUID().uuidString
 
-    // Thông tin cơ bản
     var title: String = ""
     var ownerName: String = ""
     var address: String = ""
@@ -56,21 +55,16 @@ struct HotelForm: Identifiable {
     var district: String = ""
     var description: String = ""
 
-    // Vị trí
     var latitude: String = ""
     var longitude: String = ""
 
-    // Giá (dạng text để user nhập tự do, parse khi lưu)
-    // Format: "Tên phòng:giá" mỗi dòng
+   
     var priceEntries: [PriceEntry] = [PriceEntry()]
 
-    // Tiện nghi (checkbox)
     var amenities: [ListingAmenities] = []
 
-    // Rating
     var rating: String = "4.5"
 
-    // Ảnh đã chọn từ PhotoLibrary (không lưu Firestore, chỉ dùng local)
     var selectedImages: [UIImage] = []
 
     // MARK: Firestore serialization
