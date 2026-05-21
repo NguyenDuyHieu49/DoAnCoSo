@@ -30,25 +30,25 @@ struct AddHotelView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 20) {
 
-                        sectionCard(title: "Thông tin khách sạn", icon: "building.2") {
-                            formField("Tên khách sạn", icon: "text.justify", text: $form.title)
-                            formField("Tên chủ sở hữu", icon: "person.fill", text: $form.ownerName)
-                            formField("Mô tả", icon: "text.bubble", text: $form.description, multiline: true)
+                        sectionCard(title: "hotel_info", icon: "building.2") {
+                            formField("hotelName", icon: "text.justify", text: $form.title)
+                            formField("owner_name", icon: "person.fill", text: $form.ownerName)
+                            formField("description_hotel", icon: "text.bubble", text: $form.description, multiline: true)
                         }
 
-                        sectionCard(title: "Địa chỉ", icon: "map.fill") {
-                            formField("Địa chỉ", icon: "house.fill", text: $form.address)
+                        sectionCard(title: "hotel_adress", icon: "map.fill") {
+                            formField("enter_adress", icon: "house.fill", text: $form.address)
                             HStack(spacing: 12) {
-                                formField("Thành phố", icon: "building.columns", text: $form.city)
-                                formField("Quận/Huyện", icon: "mappin", text: $form.district)
+                                formField("hotel_city", icon: "building.columns", text: $form.city)
+                                formField("hotel_city", icon: "mappin", text: $form.district)
                             }
                             HStack(spacing: 12) {
-                                formField("Vĩ độ", icon: "location.north", text: $form.latitude, keyboard: .decimalPad)
-                                formField("Kinh độ", icon: "location", text: $form.longitude, keyboard: .decimalPad)
+                                formField("hotel_longtitude", icon: "location.north", text: $form.latitude, keyboard: .decimalPad)
+                                formField("hotel_latitude", icon: "location", text: $form.longitude, keyboard: .decimalPad)
                             }
                         }
 
-                        sectionCard(title: "Loại phòng & Giá", icon: "tag.fill") {
+                        sectionCard(title: "room_type_price", icon: "tag.fill") {
                             ForEach($form.priceEntries) { $entry in
                                 priceEntryRow(entry: $entry)
                             }
@@ -69,10 +69,9 @@ struct AddHotelView: View {
                             }
                         }
 
-                        sectionCard(title: "Đánh giá", icon: "star.fill") {
+                        sectionCard(title: "rate", icon: "star.fill") {
                             HStack(spacing: 12) {
                                 formField("Rating (0-5)", icon: "star", text: $form.rating, keyboard: .decimalPad)
-                                // Visual star
                                 HStack(spacing: 3) {
                                     ForEach(0..<5) { i in
                                         Image(systemName: Double(form.rating) ?? 0 > Double(i) ? "star.fill" : "star")
@@ -86,11 +85,11 @@ struct AddHotelView: View {
                             }
                         }
 
-                        sectionCard(title: "Tiện nghi", icon: "checklist") {
+                        sectionCard(title: "amenties", icon: "checklist") {
                             amenitiesGrid
                         }
 
-                        sectionCard(title: "Hình ảnh khách sạn", icon: "photo.stack.fill") {
+                        sectionCard(title: "hotel_pics", icon: "photo.stack.fill") {
                             imagePickerSection
                         }
 
@@ -392,7 +391,7 @@ struct AddHotelView: View {
 
     @ViewBuilder
     private func sectionCard<Content: View>(
-        title: String,
+        title: LocalizedStringKey,
         icon: String,
         @ViewBuilder content: () -> Content
     ) -> some View {
@@ -425,7 +424,7 @@ struct AddHotelView: View {
 
     @ViewBuilder
     private func formField(
-        _ placeholder: String,
+        _ placeholder: LocalizedStringKey,
         icon: String,
         text: Binding<String>,
         keyboard: UIKeyboardType = .default,

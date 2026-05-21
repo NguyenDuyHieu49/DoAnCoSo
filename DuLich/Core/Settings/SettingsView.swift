@@ -8,7 +8,6 @@ struct SettingsView: View {
 
     var body: some View {
         ZStack {
-            // Background gradient
             LinearGradient(
                 colors: [
                     Color(red: 0.55, green: 0.75, blue: 1.0),
@@ -20,7 +19,6 @@ struct SettingsView: View {
             )
             .ignoresSafeArea()
 
-            // Decorative orbs
             Circle()
                 .fill(Color.white.opacity(0.32))
                 .frame(width: 270, height: 270)
@@ -36,13 +34,12 @@ struct SettingsView: View {
             ScrollView {
                 VStack(spacing: 20) {
 
-                    // Account section
                     glassSection {
                         VStack(spacing: 0) {
-                            sectionHeader(title: "Tài khoản", icon: "person.circle.fill")
+                            sectionHeader(title: "account", icon: "person.circle.fill")
 
                             settingsButton(
-                                title: "Đăng xuất",
+                                title: "sign_out",
                                 icon: "arrow.right.circle",
                                 iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
                                 showDivider: true
@@ -58,7 +55,7 @@ struct SettingsView: View {
                             }
 
                             settingsButton(
-                                title: "Xoá tài khoản",
+                                title: "delete_account",
                                 icon: "trash.circle",
                                 iconColor: Color(red: 0.85, green: 0.15, blue: 0.15),
                                 labelColor: Color(red: 0.85, green: 0.15, blue: 0.15),
@@ -76,14 +73,13 @@ struct SettingsView: View {
                         }
                     }
 
-                    // Email section
                     if viewModel.authProviders.contains(.email) {
                         glassSection {
                             VStack(spacing: 0) {
                                 sectionHeader(title: "Email", icon: "envelope.circle.fill")
 
                                 settingsButton(
-                                    title: "Thiết lập lại mật khẩu",
+                                    title: "reset_password",
                                     icon: "key.horizontal",
                                     iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
                                     showDivider: true
@@ -91,7 +87,7 @@ struct SettingsView: View {
                                     Task {
                                         do {
                                             try await viewModel.resetPassword()
-                                            print("Đã thiết lập lại mật khẩu")
+                                            print("password_reset")
                                         } catch {
                                             print(error)
                                         }
@@ -99,7 +95,7 @@ struct SettingsView: View {
                                 }
 
                                 settingsButton(
-                                    title: "Cập nhật mật khẩu",
+                                    title: "update_password",
                                     icon: "lock.rotation",
                                     iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
                                     showDivider: true
@@ -114,7 +110,7 @@ struct SettingsView: View {
                                 }
 
                                 settingsButton(
-                                    title: "Cập nhật Email",
+                                    title: "update_email",
                                     icon: "envelope.badge",
                                     iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
                                     showDivider: false
@@ -131,14 +127,13 @@ struct SettingsView: View {
                         }
                     }
 
-                    // Anonymous section
                     if viewModel.authUser?.isAnonymous == true {
                         glassSection {
                             VStack(spacing: 0) {
-                                sectionHeader(title: "Liên kết tài khoản", icon: "link.circle.fill")
+                                sectionHeader(title: "link_account", icon: "link.circle.fill")
 
                                 settingsButton(
-                                    title: "Liên kết với Google",
+                                    title: "link_google_account",
                                     icon: "globe",
                                     iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
                                     showDivider: true
@@ -146,7 +141,7 @@ struct SettingsView: View {
                                     Task {
                                         do {
                                             try await viewModel.linkGoogleAccount()
-                                            print("Liên kết thành công")
+                                            print("success")
                                         } catch {
                                             print(error)
                                         }
@@ -154,7 +149,7 @@ struct SettingsView: View {
                                 }
 
                                 settingsButton(
-                                    title: "Liên kết với Email",
+                                    title: "link_email_account",
                                     icon: "envelope",
                                     iconColor: Color(red: 0.2, green: 0.45, blue: 0.95),
                                     showDivider: false
@@ -162,7 +157,7 @@ struct SettingsView: View {
                                     Task {
                                         do {
                                             try await viewModel.linkEmailAccount()
-                                            print("Liên kết thành công")
+                                            print("success")
                                         } catch {
                                             print(error)
                                         }
@@ -194,7 +189,6 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Glass section container
     @ViewBuilder
     private func glassSection<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         ZStack {
@@ -225,7 +219,6 @@ struct SettingsView: View {
         .shadow(color: Color(red: 0.2, green: 0.4, blue: 0.8).opacity(0.12), radius: 14, x: 0, y: 7)
     }
 
-    // MARK: - Section header
     private func sectionHeader(title: String, icon: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
@@ -243,7 +236,6 @@ struct SettingsView: View {
         .padding(.bottom, 8)
     }
 
-    // MARK: - Settings row button
     private func settingsButton(
         title: String,
         icon: String,

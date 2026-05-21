@@ -62,7 +62,6 @@ struct HistoryView: View {
         }
     }
 
-    // MARK: - Loading
     private var loadingView: some View {
         VStack(spacing: 16) {
             ZStack {
@@ -80,7 +79,6 @@ struct HistoryView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    // MARK: - Error
     private func errorView(_ message: String) -> some View {
         VStack(spacing: 24) {
             ZStack {
@@ -108,7 +106,6 @@ struct HistoryView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    // MARK: - Empty
     private var emptyView: some View {
         VStack(spacing: 24) {
             ZStack {
@@ -128,7 +125,7 @@ struct HistoryView: View {
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
             }
-            glassButton(title: "Tải lại", icon: "arrow.clockwise") {
+            glassButton(title: "reload", icon: "arrow.clockwise") {
                 Task { await vm.load() }
             }
         }
@@ -136,7 +133,6 @@ struct HistoryView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    // MARK: - Booking list
     private var bookingListView: some View {
         ScrollView {
             LazyVStack(spacing: 14) {
@@ -154,7 +150,6 @@ struct HistoryView: View {
         .refreshable { await vm.load() }
     }
 
-    // MARK: - Glass button
     private func glassButton(title: String, icon: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 8) {
@@ -177,7 +172,6 @@ struct HistoryView: View {
     }
 }
 
-// MARK: - BookingRowCard
 struct BookingRowCard: View {
     let booking: DBBooking
 
@@ -209,7 +203,6 @@ struct BookingRowCard: View {
                 )
 
             HStack(spacing: 14) {
-                // Icon badge
                 ZStack {
                     RoundedRectangle(cornerRadius: 13, style: .continuous)
                         .fill(

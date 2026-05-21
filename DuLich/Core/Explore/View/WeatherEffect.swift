@@ -38,7 +38,6 @@ struct RainEffect: View {
     }
 }
 
-// MARK: – Snow Effect
 struct SnowEffect: View {
     @State private var animate = false
 
@@ -70,7 +69,6 @@ struct SnowEffect: View {
     }
 }
 
-// MARK: – Sun Rays Effect
 struct SunRaysEffect: View {
     @State private var rotate = false
 
@@ -105,8 +103,6 @@ struct SunRaysEffect: View {
     }
 }
 
-// MARK: – Overcast Effect (nhiều mây sắp mưa)
-// Các dải mây mờ trôi chậm ngang qua card
 struct OvercastEffect: View {
     @State private var offsetX: CGFloat = 0
 

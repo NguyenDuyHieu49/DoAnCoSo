@@ -3,7 +3,6 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 
-// MARK: - User Role
 enum UserRole: String, Codable {
     case user  = "user"
     case admin = "admin"
@@ -32,7 +31,6 @@ struct DBUser: Identifiable, Hashable, Codable {
 
     var isAdmin: Bool { role == .admin }
 
-    // Compatibility initializer
     init(userid: String,
          isAnonymous: Bool = false,
          email: String? = nil,
@@ -59,7 +57,6 @@ struct DBUser: Identifiable, Hashable, Codable {
         self.role = role
     }
 
-    // Preferred initializer
     init(userId: String,
          isAnonymous: Bool = false,
          email: String? = nil,
@@ -86,7 +83,6 @@ struct DBUser: Identifiable, Hashable, Codable {
         self.role = role
     }
 
-    // Init from Firestore data
     init(id: String, data: [String: Any]) throws {
         self.userId = id
         self.email = data["email"] as? String

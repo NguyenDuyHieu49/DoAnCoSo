@@ -6,12 +6,11 @@ import FirebaseCore
 struct DuLichApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var authState = AuthState()
-    // DON'T initialize from UserDefaults here; we'll set initial value in init properly
     @State private var hasSeenWelcome: Bool
 
     init() {
         FirebaseApp.configure()
-        UserDefaults.standard.removeObject(forKey: "hasSeenWelcome") // DEBUG only
+        UserDefaults.standard.removeObject(forKey: "hasSeenWelcome") 
         _hasSeenWelcome = State(initialValue: false)
         print("DEBUG: removed hasSeenWelcome")
     }

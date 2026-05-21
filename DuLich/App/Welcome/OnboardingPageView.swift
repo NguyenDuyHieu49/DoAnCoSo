@@ -2,8 +2,8 @@
 import SwiftUI
 
 struct OnboardingPage {
-    let title: String
-    let subtitle: String
+    let title: LocalizedStringKey
+    let subtitle: LocalizedStringKey
     let imageName: String?}
 
 struct OnboardingPageView: View {

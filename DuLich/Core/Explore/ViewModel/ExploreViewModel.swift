@@ -5,7 +5,6 @@
 //  Created by Macbook Pro on 3/5/26.
 //
 
-// ExploreViewModel.swift
 import Foundation
 import Combine
 
@@ -20,8 +19,6 @@ class ExploreViewModel: ObservableObject {
         self.service = service
         Task { await fetchListing() }
     }
-
-    // MARK: - Fetch (gọi lần đầu từ init)
     func fetchListing() async {
         await MainActor.run { isLoading = true }
         do {
@@ -37,12 +34,10 @@ class ExploreViewModel: ObservableObject {
         }
     }
 
-    // MARK: - loadListings (gọi sau khi Admin thêm / xoá khách sạn)
     func loadListings() async {
         await fetchListing()
     }
 
-    // MARK: - Search
     func searchDestination(_ location: String) {
         let keyword = location
             .lowercased()

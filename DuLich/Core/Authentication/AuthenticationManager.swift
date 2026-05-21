@@ -63,7 +63,6 @@ final class AuthenticationManager {
         try await user.delete()
     }
 }
-//Email
 extension AuthenticationManager {
     
     @discardableResult
@@ -109,7 +108,6 @@ extension AuthenticationManager{
     }
 }
 
-// Anonymous
 
 extension AuthenticationManager{
     

@@ -33,7 +33,6 @@ struct BookingDetailView: View {
                 }
                 .padding()
             } else {
-                // No booking yet: try to load
                 VStack(spacing: 12) {
                     Text("Không có thông tin đặt phòng")
                         .foregroundColor(.secondary)
@@ -105,7 +104,6 @@ struct BookingDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
 
-                // Dates
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Ngày nhận phòng").font(.caption).foregroundColor(.secondary)
                     Text(Self.dateFormatter.string(from: booking.checkIn))
@@ -132,7 +130,6 @@ struct BookingDetailView: View {
                 }
                 .padding(.horizontal)
 
-                // Map preview if coordinates exist in meta
                 if let lat = vm.latitude, let lon = vm.longitude {
                     Map(coordinateRegion: .constant(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: lat, longitude: lon), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))), interactionModes: [])
                         .frame(height: 180)
@@ -140,7 +137,6 @@ struct BookingDetailView: View {
                         .padding(.horizontal)
                 }
 
-                // User info (if stored in meta)
                 if let meta = vm.meta, !meta.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Thông tin người đặt").font(.headline)
@@ -164,7 +160,6 @@ struct BookingDetailView: View {
         }
     }
 
-    // Date formatters
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateStyle = .medium
@@ -191,12 +186,10 @@ final class BookingDetailViewModel: ObservableObject {
     @Published var infoMessage: String? = nil
     @Published var didCancelSuccessfully: Bool = false
 
-    // optional parsed meta
     @Published var meta: [String: Any]? = nil
     @Published var latitude: Double? = nil
     @Published var longitude: Double? = nil
 
-    /// Load either from provided booking or fetch by id
     func load(booking: DBBooking?, bookingId: String?) async {
         isLoading = true
         errorMessage = nil
@@ -226,7 +219,6 @@ final class BookingDetailViewModel: ObservableObject {
         }
     }
 
-    /// Cancel booking
     func cancelBooking() async {
         guard let id = booking?.id else { return }
         isCancelling = true
@@ -244,17 +236,9 @@ final class BookingDetailViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Helpers
 
     private func parseMeta(from booking: DBBooking) {
-        // If DBBooking has a meta dictionary, extract it. This depends on your DBBooking implementation.
-        // Here we attempt to read a `meta` property via reflection or if DBBooking exposes it.
-        // If DBBooking doesn't expose meta, you can modify DBBooking to include a meta field.
         self.meta = nil
-        // Example: if DBBooking had a `meta` property:
-        // self.meta = booking.meta
-
-        // Try to parse coordinates from meta keys "lat" / "lng" or "latitude"/"longitude"
         if let m = self.meta {
             if let lat = m["lat"] as? Double ?? (m["latitude"] as? Double),
                let lon = m["lng"] as? Double ?? (m["longitude"] as? Double) {
@@ -264,10 +248,7 @@ final class BookingDetailViewModel: ObservableObject {
         }
     }
 
-    /// Fallback fetch: try to fetch bookings for current user and find by id.
     private func fetchBookingById(id: String) async throws -> DBBooking? {
-        // If BookingManager has a direct fetch-by-id, use it. Otherwise fetch user's bookings.
-        // This implementation tries to fetch all bookings for current user and find the id.
         if let uid = Auth.auth().currentUser?.uid {
             let items = try await BookingManager.shared.fetchBookings(forUserId: uid)
             return items.first(where: { $0.id == id })

@@ -2,8 +2,6 @@
 //  DestinationSearch.swift
 //  DuLich
 //
-//  Redesigned with Glassmorphism – iOS light theme
-//
 
 import SwiftUI
 
@@ -25,7 +23,7 @@ struct DestinationSearch: View {
 
     var body: some View {
         ZStack {
-            // Nền gradient sáng mờ cho toàn màn hình
+            
             LinearGradient(
                 colors: [
                     Color(red: 0.55, green: 0.80, blue: 0.98),
@@ -38,7 +36,6 @@ struct DestinationSearch: View {
 
             VStack(spacing: 0) {
 
-                // MARK: – Header bar
                 HStack {
                     Button {
                         withAnimation(.snappy) { show.toggle() }
@@ -64,7 +61,6 @@ struct DestinationSearch: View {
 
                     Spacer()
 
-                    // Clear button giữ kích thước cân bằng
                     if !destination.isEmpty {
                         Button("Xoá") {
                             destination = ""
@@ -84,7 +80,6 @@ struct DestinationSearch: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 12) {
 
-                        // MARK: – Location card
                         GlassSearchCard(
                             isExpanded: selectedOption == .location,
                             accentColor: Color(red: 0.15, green: 0.50, blue: 0.95),
@@ -125,7 +120,6 @@ struct DestinationSearch: View {
                             }
                         }
 
-                        // MARK: – Date card
                         GlassSearchCard(
                             isExpanded: selectedOption == .dateGo,
                             accentColor: Color(red: 0.05, green: 0.65, blue: 0.75),
@@ -133,20 +127,19 @@ struct DestinationSearch: View {
                         ) {
                             withAnimation(.snappy) { selectedOption = .dateGo }
                         } collapsedContent: {
-                            ExtractedView(title: "Ngày đi", description: "Thêm ngày")
+                            ExtractedView(title: "departure_day", description: "add_day")
                         } expandedContent: {
                             VStack(alignment: .leading, spacing: 14) {
-                                Text("Chọn ngày")
+                                Text("select_day")
                                     .font(.system(size: 17, weight: .semibold, design: .rounded))
                                     .foregroundColor(Color(white: 0.10))
 
-                                DatePickerRow(label: "Ngày đi", selection: $startDate)
+                                DatePickerRow(label: "departure_day", selection: $startDate)
                                 Divider().background(Color.white.opacity(0.50))
-                                DatePickerRow(label: "Ngày về", selection: $endDate)
+                                DatePickerRow(label: "return_day", selection: $endDate)
                             }
                         }
 
-                        // MARK: – Quantity card
                         GlassSearchCard(
                             isExpanded: selectedOption == .quantity,
                             accentColor: Color(red: 0.85, green: 0.55, blue: 0.10),
@@ -155,18 +148,18 @@ struct DestinationSearch: View {
                             withAnimation(.snappy) { selectedOption = .quantity }
                         } collapsedContent: {
                             ExtractedView(
-                                title: "Lượng khách",
-                                description: numPeople == 0 ? "Thêm số lượng" : "\(numPeople) người"
+                                title: "people_quantity",
+                                description: numPeople == 0 ? "add_number" : "\(numPeople) people"
                             )
                         } expandedContent: {
                             VStack(alignment: .leading, spacing: 14) {
-                                Text("Số lượng người")
+                                Text("number_of_people")
                                     .font(.system(size: 17, weight: .semibold, design: .rounded))
                                     .foregroundColor(Color(white: 0.10))
 
                                 HStack {
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("\(numPeople) người lớn")
+                                        Text("\(numPeople) adults")
                                             .font(.system(size: 14, weight: .medium, design: .rounded))
                                             .foregroundColor(Color(white: 0.15))
                                         Text("Miễn phí cho trẻ em dưới 5 tuổi")
@@ -175,7 +168,7 @@ struct DestinationSearch: View {
                                     }
                                     Spacer()
 
-                                    // Custom stepper
+                                   
                                     HStack(spacing: 0) {
                                         Button {
                                             if numPeople > 0 { numPeople -= 1 }
@@ -258,7 +251,6 @@ struct DestinationSearch: View {
     }
 }
 
-// MARK: – Glass Card wrapper
 struct GlassSearchCard<Collapsed: View, Expanded: View>: View {
     let isExpanded: Bool
     let accentColor: Color
@@ -353,7 +345,6 @@ struct DatePickerRow: View {
     }
 }
 
-// MARK: – ExtractedView (giữ nguyên chức năng, style lại)
 struct ExtractedView: View {
     let title: String
     let description: String

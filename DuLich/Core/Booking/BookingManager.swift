@@ -8,7 +8,6 @@ final class BookingManager {
     private let db = Firestore.firestore()
     private init() {}
 
-    /// Create a booking document in Firestore and return its document ID
     func createBooking(hotelId: String,
                        hotelName: String,
                        hotelAddress: String?,
@@ -35,14 +34,12 @@ final class BookingManager {
             "createdAt": FieldValue.serverTimestamp()
         ]
 
-        // merge meta
         meta.forEach { data[$0.key] = $0.value }
 
         let ref = try await db.collection("bookings").addDocument(data: data)
         return ref.documentID
     }
 
-    /// Fetch bookings for a user
     func fetchBookings(forUserId userId: String) async throws -> [DBBooking] {
         let snapshot = try await db.collection("bookings")
             .whereField("userId", isEqualTo: userId)
@@ -53,7 +50,6 @@ final class BookingManager {
         }
     }
 
-    /// Optional: cancel/delete booking
     func cancelBooking(bookingId: String) async throws {
         try await db.collection("bookings").document(bookingId).delete()
     }

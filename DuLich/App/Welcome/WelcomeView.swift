@@ -14,12 +14,11 @@ struct WelcomeView: View {
     @State private var showSignIn: Bool = false
 
     private let pages: [OnboardingPage] = [
-        OnboardingPage(title: "Chào mừng đến với Hotelia", subtitle: "Tìm khách sạn, đặt phòng và khám phá điểm đến yêu thích.", imageName: "welcome_hero"),
-        OnboardingPage(title: "Tìm kiếm nhanh", subtitle: "Bộ lọc thông minh giúp bạn tìm phòng phù hợp trong vài giây.", imageName: "search"),
-        OnboardingPage(title: "Quản lý lịch sử", subtitle: "Lưu trữ và xem lại các đặt phòng đã thực hiện.", imageName: "history")
+        OnboardingPage(title: "welcome_text", subtitle: "sub_welcome_1", imageName: "welcome_hero"),
+        OnboardingPage(title: "welcome_text_2", subtitle: "sub_welcome_2", imageName: "search"),
+        OnboardingPage(title: "welcome_text_3", subtitle: "sub_welcome_3", imageName: "history")
     ]
 
-    // Gradient nền thay đổi nhẹ theo trang
     private var backgroundGradient: LinearGradient {
         switch selection {
         case 0:
@@ -113,10 +112,8 @@ struct WelcomeView: View {
 
                     Spacer()
 
-                    // MARK: – Action buttons
                     VStack(spacing: 12) {
 
-                        // Nút chính
                         Button {
                             if selection < pages.count - 1 {
                                 withAnimation(.snappy) { selection += 1 }
@@ -148,9 +145,7 @@ struct WelcomeView: View {
                             )
                         }
 
-                        // Nút phụ – Đăng nhập & Khách
                         HStack(spacing: 10) {
-                            // Đăng nhập
                             Button {
                                 showSignIn = true
                             } label: {
@@ -178,7 +173,6 @@ struct WelcomeView: View {
                                 )
                             }
 
-                            // Tiếp tục với khách
                             Button {
                                 UserDefaults.standard.set(true, forKey: "hasSeenWelcome")
                                 onFinish?()

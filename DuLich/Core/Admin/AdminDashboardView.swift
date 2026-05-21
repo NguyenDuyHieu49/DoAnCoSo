@@ -120,7 +120,6 @@ struct AdminDashboardView: View {
         }
     }
 
-    // MARK: - Hotel row
     private func hotelRow(_ hotel: HotelForm) -> some View {
         HStack(spacing: 12) {
             Image(systemName: "building.2.fill")
@@ -172,7 +171,6 @@ struct AdminDashboardView: View {
         .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 3)
     }
 
-    // MARK: - Load
     private func loadHotels() async {
         isLoading = true
         hotels = (try? await AdminHotelManager.shared.fetchHotels()) ?? []

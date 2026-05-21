@@ -13,7 +13,6 @@ final class HistoryViewModel: ObservableObject {
     private var notificationToken: NSObjectProtocol?
 
     init() {
-        // Listen for booking creation notifications so we can insert the new booking immediately
         notificationToken = NotificationCenter.default.addObserver(
             forName: .didCreateBooking,
             object: nil,
@@ -34,7 +33,6 @@ final class HistoryViewModel: ObservableObject {
         }
     }
 
-    /// Load all bookings for current user and sort client-side by `createdAt` descending.
     func load() async {
         isLoading = true
         errorMessage = nil
@@ -62,7 +60,6 @@ final class HistoryViewModel: ObservableObject {
                 }
             }
 
-            // Sort descending by createdAt (fallback to distantPast if missing)
             bookings = items.sorted {
                 let aDate = $0.createdAt ?? Date.distantPast
                 let bDate = $1.createdAt ?? Date.distantPast
@@ -74,15 +71,12 @@ final class HistoryViewModel: ObservableObject {
         }
     }
 
-    /// Insert a single booking by id at the top of the list (fetches from server)
     private func insertBookingById(_ bookingId: String) async {
         do {
-            // Try fetch document directly
             let doc = try await db.collection("bookings").document(bookingId).getDocument()
             if let booking = try? manualDecode(doc: doc) {
                 upsertBooking(booking)
             } else {
-                // fallback: reload full list
                 await load()
             }
         } catch {
@@ -91,7 +85,6 @@ final class HistoryViewModel: ObservableObject {
         }
     }
 
-    /// Upsert booking into local array (avoid duplicates)
     private func upsertBooking(_ booking: DBBooking) {
         if let idx = bookings.firstIndex(where: { $0.id == booking.id }) {
             bookings[idx] = booking
@@ -100,11 +93,9 @@ final class HistoryViewModel: ObservableObject {
         }
     }
 
-    // Manual decode from DocumentSnapshot -> DBBooking
     private func manualDecode(doc: DocumentSnapshot) throws -> DBBooking? {
         let data = doc.data() ?? [:]
 
-        // Required fields
         guard let userId = data["userId"] as? String else { return nil }
         guard let hotelId = data["hotelId"] as? String else { return nil }
         guard let hotelName = data["hotelName"] as? String else { return nil }
@@ -121,7 +112,6 @@ final class HistoryViewModel: ObservableObject {
 
         let currency = data["currency"] as? String ?? "VND"
 
-        // Dates: support Timestamp or Date
         let checkIn: Date
         if let ts = data["checkIn"] as? Timestamp { checkIn = ts.dateValue() }
         else if let d = data["checkIn"] as? Date { checkIn = d }
@@ -137,7 +127,6 @@ final class HistoryViewModel: ObservableObject {
         else if let d = data["createdAt"] as? Date { createdAt = d }
         else { createdAt = nil }
 
-        // Build DBBooking using your initializer
         let booking = DBBooking(
             id: id,
             userId: userId,

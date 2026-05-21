@@ -75,11 +75,11 @@ struct MiniWeatherCard: View {
 
         HStack(spacing: 12) {
             let vm1 = WeatherViewModel()
-            let _ = { vm1.cityName = "Hà Nội"; vm1.temperature = "34°C"; vm1.description = "trời nắng"; vm1.humidity = 58; vm1.windSpeed = 1.2 }()
+            let _ = { vm1.cityName = "Hanoi"; vm1.temperature = "34°C"; vm1.description = "Sunny"; vm1.humidity = 58; vm1.windSpeed = 1.2 }()
             MiniWeatherCard(viewModel: vm1)
 
             let vm2 = WeatherViewModel()
-            let _ = { vm2.cityName = "Đà Lạt"; vm2.temperature = "22°C"; vm2.description = "có mây"; vm2.humidity = 72; vm2.windSpeed = 2.5 }()
+            let _ = { vm2.cityName = "Dalat"; vm2.temperature = "22°C"; vm2.description = "Cloudy"; vm2.humidity = 72; vm2.windSpeed = 2.5 }()
             MiniWeatherCard(viewModel: vm2)
         }
     }

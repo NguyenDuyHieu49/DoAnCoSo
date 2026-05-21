@@ -9,7 +9,7 @@ struct ExploreView: View {
     @StateObject var viewModel = ExploreViewModel(service: ExploreService())
     @StateObject var weatherVM = WeatherViewModel()
     @State private var showWeatherDetail = false
-    @State private var showAddHotel = false         // ← Admin: show AddHotelView
+    @State private var showAddHotel = false         
 
     @EnvironmentObject private var authState: AuthState
 
@@ -22,7 +22,6 @@ struct ExploreView: View {
             } else {
                 ZStack(alignment: .bottomTrailing) {
 
-                    // ── Main background ──────────────────────────────────
                     ZStack(alignment: .top) {
                         LinearGradient(
                             colors: [
@@ -38,7 +37,6 @@ struct ExploreView: View {
                         ScrollView(showsIndicators: false) {
                             VStack(spacing: 16) {
 
-                                // Search bar
                                 GlassSearchBar()
                                     .onTapGesture {
                                         withAnimation(.snappy) {
@@ -46,7 +44,6 @@ struct ExploreView: View {
                                         }
                                     }
 
-                                // Weather card
                                 WeatherCard(viewModel: weatherVM)
                                     .onAppear {
                                         Task { await weatherVM.fetchWeather(for: "Hanoi") }
@@ -56,7 +53,6 @@ struct ExploreView: View {
                                         WeatherDetailView(viewModel: weatherVM)
                                     }
 
-                                // Section header
                                 HStack {
                                     Text("Gợi ý cho bạn")
                                         .font(.system(size: 17, weight: .semibold, design: .rounded))

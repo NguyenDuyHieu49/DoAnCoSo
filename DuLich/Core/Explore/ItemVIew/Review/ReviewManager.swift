@@ -14,7 +14,6 @@ final class ReviewsManager {
     private let db = Firestore.firestore()
     private init() {}
 
-    // Fetch reviews for a listing
     func fetchReviews(for listingId: String) async throws -> [Review] {
         let q = db.collection("reviews")
             .whereField("listingId", isEqualTo: listingId)
@@ -55,7 +54,6 @@ final class ReviewsManager {
         return loaded
     }
 
-    // Submit a new review
     func submitReview(listingId: String, authorName: String, rating: Double, comment: String) async throws -> Review {
         guard let uid = Auth.auth().currentUser?.uid else {
             throw NSError(domain: "ReviewsManager", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])
@@ -87,7 +85,6 @@ final class ReviewsManager {
                       isLikedByCurrentUser: false)
     }
 
-    // Toggle like/unlike (transactional)
     func toggleLike(reviewId: String) async throws -> (isLiked: Bool, likes: Int) {
         guard let uid = Auth.auth().currentUser?.uid else {
             throw NSError(domain: "ReviewsManager", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])

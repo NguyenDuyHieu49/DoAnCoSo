@@ -18,14 +18,15 @@ class WeatherViewModel: ObservableObject {
     @Published var clouds: Int = 0
     @Published var cityName: String = "Hanoi"
     
-    // Trường để lưu loại thời tiết chính (ví dụ: Clear, Clouds, Rain...)
     @Published var weatherMain: String = "Unknown"
     
     func fetchWeather(for city: String) async {
         let apiKey = "8ff885aa6cce5897224ccf0665e7199d" // tốt hơn: load từ config
         let cityEscaped = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? city
-        let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(cityEscaped),VN&appid=\(apiKey)&units=metric&lang=vi"
-        
+        let currentLang = Locale.current.language.languageCode?.identifier ?? "en"
+        let urlString = """
+        https://api.openweathermap.org/data/2.5/weather?q=\(cityEscaped),VN&appid=\(apiKey)&units=metric&lang=\(currentLang)
+        """
         guard let url = URL(string: urlString) else {
             self.description = "URL không hợp lệ"
             return
@@ -42,7 +43,6 @@ class WeatherViewModel: ObservableObject {
             self.humidity = result.main.humidity
             self.windSpeed = result.wind.speed
             self.clouds = result.clouds.all
-            // Map từ mô tả (vi) sang nhóm chính để dùng icon/màu
             let viDesc = result.weather.first?.description.lowercased() ?? ""
             if viDesc.contains("mưa giông") || viDesc.contains("dông") || viDesc.contains("sấm") || viDesc.contains("sét") {
                 self.weatherMain = "Thunderstorm"

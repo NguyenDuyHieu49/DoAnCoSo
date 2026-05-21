@@ -11,8 +11,7 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background gradient
-                LinearGradient(
+             LinearGradient(
                     colors: [
                         Color(red: 0.55, green: 0.75, blue: 1.0),
                         Color(red: 0.75, green: 0.88, blue: 1.0),
@@ -23,7 +22,6 @@ struct ProfileView: View {
                 )
                 .ignoresSafeArea()
 
-                // Decorative orbs
                 Circle()
                     .fill(Color.white.opacity(0.32))
                     .frame(width: 280, height: 280)
@@ -36,7 +34,6 @@ struct ProfileView: View {
                     .blur(radius: 52)
                     .offset(x: 130, y: 240)
 
-                // Content states
                 Group {
                     if vm.isLoading {
                         loadingView
@@ -88,7 +85,6 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - Loading
     private var loadingView: some View {
         VStack(spacing: 16) {
             ZStack {
@@ -106,7 +102,6 @@ struct ProfileView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    // MARK: - Error
     private func errorView(_ message: String) -> some View {
         VStack(spacing: 24) {
             ZStack {
@@ -134,7 +129,6 @@ struct ProfileView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    // MARK: - Not signed in
     private var notSignedInView: some View {
         VStack(spacing: 24) {
             ZStack {
@@ -162,7 +156,6 @@ struct ProfileView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    // MARK: - User content
     private func userContentView(user: DBUser) -> some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -176,14 +169,12 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - Header card
     @ViewBuilder
     private func headerCard(user: DBUser) -> some View {
         ZStack {
             glassCardBackground()
 
             HStack(spacing: 18) {
-                // Avatar
                 ZStack {
                     Circle()
                         .fill(
@@ -247,16 +238,15 @@ struct ProfileView: View {
         .shadow(color: Color(red: 0.2, green: 0.4, blue: 0.8).opacity(0.13), radius: 14, x: 0, y: 7)
     }
 
-    // MARK: - Info card
     private func infoCard(user: DBUser) -> some View {
         ZStack {
             glassCardBackground()
 
             VStack(spacing: 0) {
                 infoRow(
-                    label: "Số điện thoại",
+                    label: "phone_number",
                     icon: "phone.fill",
-                    value: user.phoneNumber ?? "Chưa có"
+                    value: user.phoneNumber ?? "not_available"
                 )
 
                 Divider()
@@ -274,7 +264,7 @@ struct ProfileView: View {
                             .textCase(.uppercase)
                             .tracking(0.5)
                     }
-                    Text(user.bio ?? "Chưa có")
+                    Text(user.bio ?? "not_available")
                         .font(.system(size: 14, design: .rounded))
                         .foregroundColor(Color(red: 0.15, green: 0.15, blue: 0.3).opacity(0.8))
                         .fixedSize(horizontal: false, vertical: true)
@@ -310,10 +300,8 @@ struct ProfileView: View {
         .padding(.vertical, 14)
     }
 
-    // MARK: - Action buttons
     private func actionButtons(user: DBUser) -> some View {
         VStack(spacing: 12) {
-            // Edit profile button
             Button {
                 showEdit = true
             } label: {
@@ -391,7 +379,6 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - Reusable glass card background
     private func glassCardBackground() -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
@@ -413,7 +400,6 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - Reusable glass button
     private func glassButton(title: String, icon: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 8) {

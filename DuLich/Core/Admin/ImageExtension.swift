@@ -4,8 +4,6 @@
 //
 //  Created by Macbook Pro on 19/5/26.
 //
-
-// UIImage+Extensions.swift
 import UIKit
 
 extension UIImage {

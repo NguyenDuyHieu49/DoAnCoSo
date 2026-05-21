@@ -21,7 +21,6 @@ final class ProfileViewModel: ObservableObject {
             if let fetched = try await UserManager.shared.getUser(userId: uid) {
                 self.user = fetched
             } else {
-                // nếu chưa có document, tạo từ auth user
                 if let authUser = Auth.auth().currentUser {
                     let dbUser = DBUser(from: authUser)
                     try await UserManager.shared.createNewUser(user: dbUser)

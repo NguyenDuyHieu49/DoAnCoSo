@@ -19,7 +19,6 @@ struct ListingItemView: View {
                     Text("\(listing.address), \(listing.city)")
                         .fontWeight(.semibold)
                         .foregroundColor(.teal)
-                    Text("\(listing.distance) km").foregroundStyle(.gray)
                 }
                 Spacer()
                 HStack(spacing: 2) {

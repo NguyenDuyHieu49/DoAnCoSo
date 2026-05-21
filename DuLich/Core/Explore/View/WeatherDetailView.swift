@@ -38,7 +38,6 @@ struct WeatherDetailView: View {
             )
         case "Clouds":
             if isPartlyCloudy {
-                // Nắng có mây – gradient ấm áp
                 return LinearGradient(
                     colors: [
                         Color(red: 0.98, green: 0.88, blue: 0.55),
@@ -47,7 +46,7 @@ struct WeatherDetailView: View {
                     startPoint: .topLeading, endPoint: .bottomTrailing
                 )
             } else {
-                // Nhiều mây sắp mưa – xám xanh lạnh, u ám
+                
                 return LinearGradient(
                     colors: [
                         Color(red: 0.45, green: 0.52, blue: 0.66),
@@ -78,8 +77,8 @@ struct WeatherDetailView: View {
         switch viewModel.weatherMain {
         case "Clouds":
             return isPartlyCloudy
-                ? "Nắng có mây · \(viewModel.clouds)% mây"
-                : "Nhiều mây · Dễ có mưa · \(viewModel.clouds)% mây"
+                ? String(format: NSLocalizedString("weather_partly_cloudy", comment: ""), viewModel.clouds)
+                : String(format: NSLocalizedString("weather_heavy_cloud", comment: ""), viewModel.clouds)
         default:
             return viewModel.description.capitalized
         }
@@ -89,7 +88,6 @@ struct WeatherDetailView: View {
         ZStack {
             backgroundGradient.ignoresSafeArea()
 
-            // Decorative orbs
             Circle()
                 .fill(accentColor.opacity(0.28))
                 .frame(width: 260, height: 260)
@@ -105,9 +103,8 @@ struct WeatherDetailView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
 
-                    // MARK: – Header
                     VStack(spacing: 6) {
-                        Text("Thời tiết hôm nay")
+                        Text("weather_today")
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
                             .foregroundColor(Color.white.opacity(0.75))
                             .textCase(.uppercase)
@@ -131,29 +128,28 @@ struct WeatherDetailView: View {
                     }
                     .padding(.top, 32)
 
-                    // MARK: – Stats grid
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
                         WeatherStatCell(
                             icon: "thermometer.medium",
-                            label: "Nhiệt độ",
+                            label: "temper_ature",
                             value: viewModel.temperature,
                             color: Color(red: 1.0, green: 0.55, blue: 0.25)
                         )
                         WeatherStatCell(
                             icon: "drop.fill",
-                            label: "Độ ẩm",
+                            label: "humid_ity",
                             value: "\(viewModel.humidity)%",
                             color: Color(red: 0.25, green: 0.55, blue: 1.00)
                         )
                         WeatherStatCell(
                             icon: "wind",
-                            label: "Gió",
+                            label: "win_d",
                             value: String(format: "%.1f m/s", viewModel.windSpeed),
                             color: Color(red: 0.15, green: 0.72, blue: 0.80)
                         )
                         WeatherStatCell(
                             icon: "cloud.fill",
-                            label: "Mây",
+                            label: "cloud_y",
                             value: "\(viewModel.clouds)%",
                             // Màu ô mây thay đổi theo mức độ
                             color: viewModel.clouds < 50
@@ -170,10 +166,9 @@ struct WeatherDetailView: View {
     }
 }
 
-// MARK: – Stat cell
 private struct WeatherStatCell: View {
     let icon: String
-    let label: String
+    let label: LocalizedStringKey
     let value: String
     let color: Color
 

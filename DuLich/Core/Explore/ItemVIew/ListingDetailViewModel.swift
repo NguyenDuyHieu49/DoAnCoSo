@@ -66,19 +66,19 @@ final class ListingDetailViewModel: ObservableObject {
         isProcessing = true
 
         guard let selectedRoom, let price = listing.pricePerNight?[selectedRoom] else {
-            alertMessage = "Vui lòng chọn loại phòng trước khi thanh toán."
+            alertMessage = "choose_room_to_book."
             showAlert = true
             isProcessing = false
             return
         }
         guard checkOutDate > checkInDate else {
-            alertMessage = "Ngày trả phòng phải sau ngày nhận phòng."
+            alertMessage = "out_after_in"
             showAlert = true
             isProcessing = false
             return
         }
         guard let userId = Auth.auth().currentUser?.uid else {
-            alertMessage = "Bạn cần đăng nhập để đặt phòng."
+            alertMessage = "signin_book."
             showAlert = true
             isProcessing = false
             return
@@ -111,7 +111,7 @@ final class ListingDetailViewModel: ObservableObject {
             isProcessing = false
             navigateToHistory = true
         } catch {
-            alertMessage = "Đã có lỗi xảy ra khi đặt phòng. Vui lòng thử lại."
+            alertMessage = "booking_failed."
             showAlert = true
             isProcessing = false
         }

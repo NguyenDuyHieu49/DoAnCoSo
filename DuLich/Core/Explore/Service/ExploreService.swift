@@ -67,7 +67,7 @@ class ExploreService {
                 title:          title,
                 rating:         rating,
                 district:       district,
-                features:       [],
+                features:       [.selfCheckIn,.superHost],
                 amenities:      amenities,
                 imageUrls:      images,
                 distance:       distance

@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import SwiftUI
 
-struct Listing: Identifiable, Codable, Hashable{
+struct Listing: Identifiable, Codable, Hashable {
     let id: String
     let ownerUid: String
     let ownerName: String
@@ -25,6 +26,8 @@ struct Listing: Identifiable, Codable, Hashable{
     var imageUrls: [String]
     var description: String?
     let distance: Int
+    
+    var localizedTitle: LocalizedStringKey { LocalizedStringKey(title) }
 }
 
 enum ListingFeatures: Int, Codable, Identifiable, Hashable {
@@ -40,15 +43,15 @@ enum ListingFeatures: Int, Codable, Identifiable, Hashable {
     
     var title: String {
         switch self {
-        case .selfCheckIn: return "Check-in riêng tư"
-        case .superHost: return "Khách sạn đạt chuẩn quốc tế"
+        case .selfCheckIn: return "checkin_big"
+        case .superHost: return "hotel_quality_big"
         }
     }
     
     var subtitle: String {
         switch self {
-        case .selfCheckIn: return "Check-in chỉ với 1 lần chạm"
-        case .superHost: return "Với đội ngũ lễ tân, nhân viên chuyên nghiệp, được đào tạo bài bản"
+        case .selfCheckIn: return "checkin_small"
+        case .superHost: return "hotel_quality_small"
         }
     }
     var id: Int { return self.rawValue}

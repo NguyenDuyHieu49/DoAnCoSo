@@ -10,7 +10,6 @@ final class AdminHotelManager {
 
     private let db = Firestore.firestore()
 
-    // MARK: - Add hotel
     @discardableResult
     func addHotel(form: HotelForm, images: [UIImage]) async throws -> String {
         let docRef = db.collection("hotels").document()
@@ -28,14 +27,12 @@ final class AdminHotelManager {
         return hotelId
     }
 
-    // MARK: - Delete hotel
     func deleteHotel(id: String) async throws {
         try await db.collection("hotels").document(id).delete()
         // ✅ Không cần xoá Storage nữa vì ảnh ở Cloudinary
         print("[AdminHotelManager] deleteHotel success, id:", id)
     }
 
-    // MARK: - Fetch all hotels
     func fetchHotels() async throws -> [HotelForm] {
         let snapshot = try await db.collection("hotels")
             .order(by: "createdAt", descending: true)
@@ -66,8 +63,9 @@ struct HotelForm: Identifiable {
     var rating: String = "4.5"
 
     var selectedImages: [UIImage] = []
+    
+    var distance: Int = 0
 
-    // MARK: Firestore serialization
     func toFirestoreDict() -> [String: Any] {
         var dict: [String: Any] = [
             "title":       title,
@@ -79,9 +77,9 @@ struct HotelForm: Identifiable {
             "latitude":    Double(latitude) ?? 0.0,
             "longitude":   Double(longitude) ?? 0.0,
             "rating":      Double(rating) ?? 4.5,
-            "amenities":   amenities.map { $0.rawValue }
+            "amenities":   amenities.map { $0.rawValue },
+            "distance":    distance
         ]
-        // pricePerNight dict
         var priceDict: [String: Int] = [:]
         for entry in priceEntries where !entry.roomType.isEmpty {
             priceDict[entry.roomType] = Int(entry.price) ?? 0
@@ -113,17 +111,23 @@ struct HotelForm: Identifiable {
                 return PriceEntry(roomType: key, price: String(intVal))
             }
         }
-        // amenities lưu dưới dạng [Int] (rawValue của ListingAmenities)
         if let amenityInts = data["amenities"] as? [Int] {
             self.amenities = amenityInts.compactMap { ListingAmenities(rawValue: $0) }
         }
+        if let d = data["distance"] as? Int {
+            self.distance = d
+        } else if let d = data["distance"] as? Double {
+            self.distance = Int(d)
+        } else if let s = data["distance"] as? String, let d = Int(s) {
+            self.distance = d
+        } else {
+            self.distance = 0
+        }
     }
 
-    // Default init
     init() {}
 }
 
-// MARK: - PriceEntry  (loại phòng + giá)
 struct PriceEntry: Identifiable {
     var id = UUID()
     var roomType: String = ""

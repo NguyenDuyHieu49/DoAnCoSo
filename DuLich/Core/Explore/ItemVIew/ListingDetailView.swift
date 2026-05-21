@@ -9,11 +9,11 @@ struct ListingDetailView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var viewModel = ListingDetailViewModel()
     let listing: Listing
-
     @State private var showMap: MapCameraPosition
     @State private var showRoomDetail: Bool = false
     @State private var isComposingReview: Bool = false
-
+    
+  
     init(listing: Listing) {
         self.listing = listing
         if listing.latitude != 0 && listing.longitude != 0 {
@@ -63,7 +63,7 @@ struct ListingDetailView: View {
                 isComposingReview = false
             }
         }
-        .alert("Thông báo", isPresented: $viewModel.showAlert) {
+        .alert("notifi_cation", isPresented: $viewModel.showAlert) {
             Button("OK", role: .cancel) {}
         } message: {
             Text(viewModel.alertMessage)
@@ -113,6 +113,9 @@ struct ListingDetailView: View {
     private var contentStack: some View {
         VStack(spacing: 14) {
             titleCard.padding(.top, -28)
+            if let desc = listing.description, !desc.isEmpty {
+                        descriptionCard(desc)
+                    }
             reviewsSection
             lineDivider
             ownerCard
@@ -130,7 +133,18 @@ struct ListingDetailView: View {
         .padding(.horizontal, 14)
         .padding(.bottom, 28)
     }
-
+    private func descriptionCard(_ text: String) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionHeader(title: "Mô tả")
+            Text(text)
+                .font(.system(size: 14))
+                .foregroundStyle(Glass.textSecondary)
+                .lineSpacing(5)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(18)
+        .glassCard()
+    }
     private var lineDivider: some View {
         Rectangle()
             .fill(Color(red: 0.70, green: 0.80, blue: 1.00).opacity(0.25))
@@ -277,7 +291,9 @@ struct ListingDetailView: View {
                     .tracking(0.6)
                 Text(listing.ownerName)
                     .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .minimumScaleFactor(0.8)
                     .foregroundStyle(Glass.textPrimary)
+                    .lineLimit(1)
             }
             Spacer()
             AsyncImage(url: URL(string: listing.ownerImangUrl)) { phase in
@@ -300,7 +316,7 @@ struct ListingDetailView: View {
     private var featuresCard: some View {
         VStack(alignment: .leading, spacing: 0) {
                  VStack(alignment: .leading, spacing: 14) {
-                SectionHeader(title: "Đặc điểm nổi bật")
+                SectionHeader(title: "Outstanding features")
                 ForEach(Array(listing.features.enumerated()), id: \.element.id) { idx, feature in
                     if idx > 0 {
                         Rectangle()
@@ -358,7 +374,7 @@ struct ListingDetailView: View {
      
     private var roomSelectionCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            SectionHeader(title: "Chọn loại phòng")
+            SectionHeader(title: "Select room type")
             if let roomPrices = listing.pricePerNight {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
@@ -408,12 +424,12 @@ struct ListingDetailView: View {
 
     private var datepickerCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            SectionHeader(title: "Chọn ngày lưu trú")
+            SectionHeader(title: "Select dates of stay")
             HStack(spacing: 10) {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 4) {
                         Circle().fill(Glass.green).frame(width: 7, height: 7)
-                        Text("Nhận phòng")
+                        Text("checkin")
                             .font(.system(size: 10, weight: .semibold))
                             .foregroundStyle(Glass.textTertiary)
                             .textCase(.uppercase)
@@ -432,7 +448,7 @@ struct ListingDetailView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 4) {
                         Circle().fill(Glass.pink).frame(width: 7, height: 7)
-                        Text("Trả phòng")
+                        Text("checkout")
                             .font(.system(size: 10, weight: .semibold))
                             .foregroundStyle(Glass.textTertiary)
                             .textCase(.uppercase)
@@ -457,7 +473,7 @@ struct ListingDetailView: View {
 
     private var amenitiesCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            SectionHeader(title: "Tiện ích được cung cấp")
+            SectionHeader(title: "Amenities")
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                 ForEach(listing.amenities, id: \.self) { amenity in
                     HStack(spacing: 8) {
@@ -486,7 +502,7 @@ struct ListingDetailView: View {
 
     private var mapCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Địa điểm")
+            SectionHeader(title: "Location")
             Map(position: $showMap)
                 .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: Glass.cornerMd))
@@ -513,7 +529,7 @@ struct ListingDetailView: View {
                         Text("\(Int(price)) VNĐ")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
                             .foregroundStyle(Glass.textPrimary)
-                        Text("mỗi đêm")
+                        Text("per night")
                             .font(.system(size: 11))
                             .foregroundStyle(Glass.textTertiary)
                         Text(room)
@@ -554,7 +570,7 @@ struct ListingDetailView: View {
                 }
                 .disabled(viewModel.isProcessing || viewModel.selectedRoom == nil)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .background(.ultraThinMaterial)
         }

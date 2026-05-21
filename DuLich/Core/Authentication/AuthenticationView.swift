@@ -15,7 +15,6 @@ struct AuthenticationView: View {
 
     var body: some View {
         ZStack {
-            // Background gradient
             LinearGradient(
                 colors: [
                     Color(red: 0.55, green: 0.75, blue: 1.0),
@@ -27,7 +26,6 @@ struct AuthenticationView: View {
             )
             .ignoresSafeArea()
 
-            // Decorative blurred orbs
             Circle()
                 .fill(Color.white.opacity(0.35))
                 .frame(width: 280, height: 280)
@@ -48,7 +46,6 @@ struct AuthenticationView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    // Header
                     VStack(spacing: 10) {
                         ZStack {
                             Circle()
@@ -81,10 +78,8 @@ struct AuthenticationView: View {
                     .padding(.top, 64)
                     .padding(.bottom, 44)
 
-                    // Glass card
                     VStack(spacing: 14) {
 
-                        // Anonymous button
                         Button(action: {
                             Task {
                                 do {
@@ -101,7 +96,7 @@ struct AuthenticationView: View {
                             }
                         }) {
                             authButtonLabel(
-                                title: "Khách",
+                                title: "guest_button",
                                 systemImage: "person.crop.circle",
                                 style: .secondary
                             )
@@ -121,19 +116,17 @@ struct AuthenticationView: View {
                         }
                         .padding(.vertical, 2)
 
-                        // Email NavigationLink
                         NavigationLink {
                             SignInEmailView(showSignInView: $showSignInView)
                                 .environmentObject(authState)
                         } label: {
                             authButtonLabel(
-                                title: "Đăng nhập với Email",
+                                title: "email_button",
                                 systemImage: "envelope.fill",
                                 style: .primary
                             )
                         }
 
-                        // Google button
                         Button {
                             Task {
                                 do {
@@ -150,7 +143,7 @@ struct AuthenticationView: View {
                             }
                         } label: {
                             authButtonLabel(
-                                title: "Đăng nhập với Google",
+                                title: "google_button",
                                 imageName: "google",
                                 style: .google
                             )
@@ -211,19 +204,16 @@ struct AuthenticationView: View {
 
     @ViewBuilder
     private func authButtonLabel(
-        title: String,
+        title: LocalizedStringKey,
         systemImage: String? = nil,
         imageName: String? = nil,
         style: ButtonStyle
     ) -> some View {
         ZStack {
-            // Background
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(buttonBackground(for: style))
                 .frame(height: 54)
                 .shadow(color: buttonShadow(for: style), radius: 8, x: 0, y: 4)
-
-            // Glass sheen
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(
                     LinearGradient(
@@ -233,13 +223,9 @@ struct AuthenticationView: View {
                     )
                 )
                 .frame(height: 54)
-
-            // Border
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .strokeBorder(Color.white.opacity(0.45), lineWidth: 1)
                 .frame(height: 54)
-
-            // Content
             HStack(spacing: 12) {
                 Group {
                     if let system = systemImage {
@@ -319,7 +305,6 @@ struct AuthenticationView: View {
     }
 }
 
-// Preview
 #Preview {
     NavigationStack {
         AuthenticationView(showSignInView: .constant(false))
