@@ -86,7 +86,7 @@ struct AdminDashboardView: View {
                             .padding(.top, 40)
                     } else if hotels.isEmpty {
                         VStack(spacing: 12) {
-                            Image(systemName: "building.slash")
+                            Image(systemName: "building.2")
                                 .font(.system(size: 44))
                                 .foregroundColor(Color(white: 0.6))
                             Text("Chưa có khách sạn nào")

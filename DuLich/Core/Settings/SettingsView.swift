@@ -31,7 +31,7 @@ struct SettingsView: View {
                 .blur(radius: 52)
                 .offset(x: 130, y: 230)
 
-            ScrollView {
+            ScrollView{
                 VStack(spacing: 20) {
 
                     glassSection {
@@ -237,7 +237,7 @@ struct SettingsView: View {
     }
 
     private func settingsButton(
-        title: String,
+        title: LocalizedStringKey,
         icon: String,
         iconColor: Color,
         labelColor: Color = Color(red: 0.1, green: 0.1, blue: 0.25),

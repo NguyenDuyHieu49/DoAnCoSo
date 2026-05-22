@@ -54,16 +54,6 @@ struct ProfileView: View {
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showEdit = true
-                    } label: {
-                        Image(systemName: "pencil")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.white)
-                    }
-                    .disabled(vm.user == nil)
-                }
             }
             .toolbarColorScheme(.dark, for: .navigationBar)
             .task { await vm.loadCurrentUser() }
@@ -215,7 +205,7 @@ struct ProfileView: View {
                 .shadow(color: Color(red: 0.2, green: 0.45, blue: 0.95).opacity(0.35), radius: 10, x: 0, y: 5)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(user.displayName ?? "Người dùng")
+                    Text(user.displayName ?? String(localized:"us_er"))
                         .font(.system(size: 18, weight: .bold, design: .rounded))
                         .foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.25))
                         .lineLimit(1)
@@ -246,7 +236,7 @@ struct ProfileView: View {
                 infoRow(
                     label: "phone_number",
                     icon: "phone.fill",
-                    value: user.phoneNumber ?? "not_available"
+                    value: user.phoneNumber ?? String(localized:"not_available")
                 )
 
                 Divider()
@@ -264,7 +254,7 @@ struct ProfileView: View {
                             .textCase(.uppercase)
                             .tracking(0.5)
                     }
-                    Text(user.bio ?? "not_available")
+                    Text(user.bio ?? String(localized: "not_available"))
                         .font(.system(size: 14, design: .rounded))
                         .foregroundColor(Color(red: 0.15, green: 0.15, blue: 0.3).opacity(0.8))
                         .fixedSize(horizontal: false, vertical: true)
@@ -277,7 +267,7 @@ struct ProfileView: View {
         .shadow(color: Color(red: 0.2, green: 0.4, blue: 0.8).opacity(0.13), radius: 14, x: 0, y: 7)
     }
 
-    private func infoRow(label: String, icon: String, value: String) -> some View {
+    private func infoRow(label: LocalizedStringKey, icon: String, value: String) -> some View {
         HStack(spacing: 10) {
             Image(systemName: icon)
                 .font(.system(size: 13, weight: .semibold))
@@ -319,7 +309,7 @@ struct ProfileView: View {
                         )
                         .frame(height: 54)
                         .shadow(color: Color(red: 0.2, green: 0.45, blue: 0.95).opacity(0.4), radius: 10, x: 0, y: 5)
-
+                    
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .fill(
                             LinearGradient(
@@ -329,7 +319,7 @@ struct ProfileView: View {
                             )
                         )
                         .frame(height: 54)
-
+                    
                     HStack(spacing: 8) {
                         Image(systemName: "pencil")
                             .font(.system(size: 15, weight: .semibold))
@@ -337,43 +327,6 @@ struct ProfileView: View {
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
                     }
                     .foregroundColor(.white)
-                }
-            }
-
-            // Sign out button
-            Button(role: .destructive) {
-                Task {
-                    do {
-                        try await AuthenticationManager.shared.signOut()
-                    } catch {
-                        vm.errorMessage = error.localizedDescription
-                        showErrorAlert = true
-                    }
-                }
-            } label: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Color.white.opacity(0.3))
-                        .frame(height: 54)
-
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [Color.red.opacity(0.6), Color.red.opacity(0.25)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.2
-                        )
-                        .frame(height: 54)
-
-                    HStack(spacing: 8) {
-                        Image(systemName: "arrow.right.circle")
-                            .font(.system(size: 15, weight: .semibold))
-                        Text("Đăng xuất")
-                            .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    }
-                    .foregroundColor(Color(red: 0.85, green: 0.15, blue: 0.15))
                 }
             }
         }
@@ -421,3 +374,4 @@ struct ProfileView: View {
         }
     }
 }
+

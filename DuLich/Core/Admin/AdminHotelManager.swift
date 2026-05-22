@@ -23,13 +23,32 @@ final class AdminHotelManager {
         data["createdAt"] = FieldValue.serverTimestamp()
 
         try await docRef.setData(data)
+        try await createRooms(for: form.priceEntries, hotelId: hotelId)
         print("[AdminHotelManager] addHotel success, id:", hotelId)
         return hotelId
     }
 
+    private func createRooms(for entries: [PriceEntry], hotelId: String) async throws {
+        let batch = db.batch()
+        for entry in entries where !entry.roomType.isEmpty {
+            let quantity = Int(entry.quantity) ?? 1
+            let price = Int(entry.price) ?? 0
+            for i in 1...max(1, quantity) {
+                let roomRef = db.collection("rooms").document()
+                let roomNumber = "\(entry.roomType.prefix(3).uppercased())\(String(format: "%02d", i))"
+                batch.setData([
+                    "hotelId":    hotelId,
+                    "roomType":   entry.roomType,
+                    "roomNumber": roomNumber,
+                    "price":      price
+                ], forDocument: roomRef)
+            }
+        }
+        try await batch.commit()
+        print("[AdminHotelManager] createRooms success for hotelId:", hotelId)
+    }
     func deleteHotel(id: String) async throws {
         try await db.collection("hotels").document(id).delete()
-        // ✅ Không cần xoá Storage nữa vì ảnh ở Cloudinary
         print("[AdminHotelManager] deleteHotel success, id:", id)
     }
 
@@ -132,4 +151,5 @@ struct PriceEntry: Identifiable {
     var id = UUID()
     var roomType: String = ""
     var price: String = ""
+    var quantity: String = ""
 }

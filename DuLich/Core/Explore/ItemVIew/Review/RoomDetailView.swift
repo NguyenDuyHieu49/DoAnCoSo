@@ -6,11 +6,26 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
+
+struct RoomInfo: Identifiable {
+    let id: String
+    let roomNumber: String
+    var isBooked: Bool
+}
 
 struct RoomDetailView: View {
     let roomName: String
     let price: Double
     let listing: Listing
+    let checkInDate: Date
+    let checkOutDate: Date
+    var onConfirm: (String) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var rooms: [RoomInfo] = []
+    @State private var selectedRoomNumber: String? = nil
+    @State private var isLoading = true
 
     var body: some View {
         ZStack {
@@ -33,7 +48,8 @@ struct RoomDetailView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 16)
                                 .fill(Glass.accentLight)
-                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Glass.cardStroke2, lineWidth: 0.8))
+                                .overlay(RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Glass.cardStroke2, lineWidth: 0.8))
                                 .frame(width: 60, height: 60)
                             Image(systemName: "bed.double.fill")
                                 .font(.system(size: 24))
@@ -68,11 +84,162 @@ struct RoomDetailView: View {
                     .glassCard()
                     .padding(.horizontal, 16)
 
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "list.number").foregroundStyle(Glass.accent)
+                            Text("Chọn số phòng")
+                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .foregroundStyle(Glass.textPrimary)
+                        }
+
+                        if isLoading {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                        } else if rooms.isEmpty {
+                            Text("Không có phòng nào khả dụng")
+                                .font(.system(size: 14))
+                                .foregroundStyle(Glass.textSecondary)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding()
+                        } else {
+                            LazyVGrid(
+                                columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())],
+                                spacing: 10
+                            ) {
+                                ForEach(rooms) { room in
+                                    roomCell(room: room)
+                                }
+                            }
+                        }
+                    }
+                    .padding(18)
+                    .glassCard()
+                    .padding(.horizontal, 16)
+
+                    Button {
+                        if let roomNumber = selectedRoomNumber {
+                            onConfirm(roomNumber)
+                            dismiss()
+                        }
+                    } label: {
+                        Text("Xác nhận")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: Glass.cornerMd)
+                                    .fill(selectedRoomNumber == nil
+                                          ? Glass.accent.opacity(0.35)
+                                          : Glass.accent)
+                                    .shadow(color: Glass.accent.opacity(0.30), radius: 10, x: 0, y: 5)
+                            )
+                    }
+                    .disabled(selectedRoomNumber == nil)
+                    .padding(.horizontal, 16)
+
                     Spacer(minLength: 32)
                 }
             }
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.hidden)
+        .task { await loadRooms() }
+    }
+
+    private func roomCell(room: RoomInfo) -> some View {
+        let isSelected = selectedRoomNumber == room.roomNumber
+        return Button {
+            if !room.isBooked {
+                withAnimation(.spring(response: 0.3)) {
+                    selectedRoomNumber = room.roomNumber
+                }
+            }
+        } label: {
+            VStack(spacing: 6) {
+                Image(systemName: room.isBooked ? "lock.fill" : "bed.double")
+                    .font(.system(size: 18))
+                    .foregroundStyle(
+                        room.isBooked ? Glass.textTertiary :
+                        isSelected ? Glass.accent : Glass.textSecondary
+                    )
+                Text(room.roomNumber)
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundStyle(
+                        room.isBooked ? Glass.textTertiary :
+                        isSelected ? Glass.accent : Glass.textPrimary
+                    )
+                if room.isBooked {
+                    Text("Đã đặt")
+                        .font(.system(size: 9))
+                        .foregroundStyle(Glass.textTertiary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(
+                        room.isBooked ? Color.gray.opacity(0.08) :
+                        isSelected ? Glass.accentLight : Color.white.opacity(0.55)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(
+                                room.isBooked ? Color.gray.opacity(0.2) :
+                                isSelected ? Glass.accent : Glass.cardStroke2,
+                                lineWidth: isSelected ? 1.5 : 0.8
+                            )
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(room.isBooked)
+    }
+
+    private func loadRooms() async {
+        isLoading = true
+        do {
+            let snapshot = try await Firestore.firestore()
+                .collection("rooms")
+                .whereField("hotelId", isEqualTo: listing.id)
+                .whereField("roomType", isEqualTo: roomName)
+                .getDocuments()
+
+            var result: [RoomInfo] = []
+            for doc in snapshot.documents {
+                let data = doc.data()
+                let roomNumber = data["roomNumber"] as? String ?? ""
+                let isBooked = await checkIfBooked(roomNumber: roomNumber)
+                result.append(RoomInfo(id: doc.documentID, roomNumber: roomNumber, isBooked: isBooked))
+            }
+            rooms = result.sorted { $0.roomNumber < $1.roomNumber }
+        } catch {
+            print("[RoomDetailView] loadRooms error:", error.localizedDescription)
+        }
+        isLoading = false
+    }
+
+    private func checkIfBooked(roomNumber: String) async -> Bool {
+        do {
+            let snapshot = try await Firestore.firestore()
+                .collection("bookings")
+                .whereField("hotelId", isEqualTo: listing.id)
+                .whereField("roomNumber", isEqualTo: roomNumber)
+                .getDocuments()
+
+            for doc in snapshot.documents {
+                let data = doc.data()
+                let checkOut = (data["checkOut"] as? Timestamp)?.dateValue() ?? Date.distantPast
+                let status = data["status"] as? String ?? "active"
+                if checkOut > Date() && status != "cancelled" {
+                    return true
+                }
+            }
+        } catch {
+            print("[checkIfBooked] error:", error.localizedDescription)
+        }
+        return false
     }
 }

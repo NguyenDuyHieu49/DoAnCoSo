@@ -132,9 +132,7 @@ struct AddHotelView: View {
     private var imagePickerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
 
-            // ── 2 nút chọn ảnh ──────────────────────────────
             HStack(spacing: 10) {
-                // Nút 1: Thư viện ảnh
                 PhotosPicker(
                     selection: $selectedItems,
                     maxSelectionCount: 6,
@@ -170,7 +168,6 @@ struct AddHotelView: View {
                     }
                 }
 
-                // Nút 2: File từ Mac/Files app
                 Button {
                     showFilePicker = true
                 } label: {
@@ -192,7 +189,6 @@ struct AddHotelView: View {
                 }
             }
 
-            // Preview grid
             if !form.selectedImages.isEmpty {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
                     ForEach(Array(form.selectedImages.enumerated()), id: \.offset) { index, image in
@@ -315,35 +311,47 @@ struct AddHotelView: View {
     }
 
     private func priceEntryRow(entry: Binding<PriceEntry>) -> some View {
-        HStack(spacing: 8) {
-            TextField("Loại phòng", text: entry.roomType)
-                .font(.system(size: 14, design: .rounded))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 12)
-                .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.75)))
+        VStack(spacing: 8) {
+            HStack(spacing: 8) {
+                TextField("Loại phòng", text: entry.roomType)
+                    .font(.system(size: 14, design: .rounded))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 12)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.75)))
 
-            TextField("Giá (VND)", text: entry.price)
-                .font(.system(size: 14, design: .rounded))
-                .keyboardType(.numberPad)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 12)
-                .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.75)))
-                .frame(maxWidth: 130)
+                TextField("Giá (VND)", text: entry.price)
+                    .font(.system(size: 14, design: .rounded))
+                    .keyboardType(.numberPad)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 12)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.75)))
+                    .frame(maxWidth: 120)
 
-            if form.priceEntries.count > 1 {
-                Button {
-                    withAnimation {
-                        form.priceEntries.removeAll { $0.id == entry.wrappedValue.id }
+                if form.priceEntries.count > 1 {
+                    Button {
+                        withAnimation {
+                            form.priceEntries.removeAll { $0.id == entry.wrappedValue.id }
+                        }
+                    } label: {
+                        Image(systemName: "minus.circle.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(Color(red: 0.9, green: 0.25, blue: 0.25).opacity(0.8))
                     }
-                } label: {
-                    Image(systemName: "minus.circle.fill")
-                        .font(.system(size: 20))
-                        .foregroundColor(Color(red: 0.9, green: 0.25, blue: 0.25).opacity(0.8))
                 }
+            }
+            HStack(spacing: 8) {
+                Image(systemName: "number.square")
+                    .font(.system(size: 14))
+                    .foregroundColor(Color(red: 0.35, green: 0.55, blue: 0.95))
+                TextField("number_of_rooms", text: entry.quantity)
+                    .font(.system(size: 14, design: .rounded))
+                    .keyboardType(.numberPad)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.75)))
             }
         }
     }
-
     private var saveButton: some View {
         Button {
             Task {
@@ -532,20 +540,20 @@ extension ListingAmenities: CaseIterable {
         }
     }
 
-    var displayTitle: String {
+    var displayTitle: LocalizedStringKey {
         switch self {
         case .wifi:
-            return "WiFi"
+            return "wi_fi"
         case .airConditioning:
-            return "Điều hoà"
+            return "air_conditioner"
         case .pool:
-            return "Hồ bơi"
+            return "swimming_pool"
         case .breakfast:
-            return "Bữa sáng"
+            return "break_fast"
         case .parking:
-            return "Bãi đậu xe"
+            return "park_ing"
         case .tivi:
-            return "TV"
+            return "t_v"
         }
     }
 }

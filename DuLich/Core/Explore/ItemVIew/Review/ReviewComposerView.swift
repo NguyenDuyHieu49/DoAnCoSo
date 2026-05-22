@@ -47,7 +47,7 @@ struct ReviewComposerView: View {
 
                     VStack(alignment: .leading, spacing: 14) {
 
-                        SectionHeader(title: "Đánh giá sao")
+                        SectionHeader(title: String(localized:"star_rate"))
 
                         HStack(spacing: 12) {
                             ForEach(1...5, id: \.self) { i in
@@ -66,8 +66,8 @@ struct ReviewComposerView: View {
                     .glassCard()
 
                     VStack(alignment: .leading, spacing: 10) {
-                        SectionHeader(title: "Tên của bạn")
-                        TextField("Nhập tên...", text: $authorName)
+                        SectionHeader(title: String(localized:"your_name"))
+                        TextField("enter_name", text: $authorName)
                             .font(.system(size: 15, design: .rounded))
                             .foregroundStyle(Glass.textPrimary)
                             .padding(.horizontal, 14)
@@ -83,7 +83,7 @@ struct ReviewComposerView: View {
                     .glassCard()
 
                     VStack(alignment: .leading, spacing: 10) {
-                        SectionHeader(title: "Nhận xét")
+                        SectionHeader(title: String(localized: "com_ment"))
                         TextEditor(text: $comment)
                             .font(.system(size: 15, design: .rounded))
                             .foregroundStyle(Glass.textPrimary)

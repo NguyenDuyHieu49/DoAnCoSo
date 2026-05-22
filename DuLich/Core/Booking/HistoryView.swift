@@ -125,7 +125,7 @@ struct HistoryView: View {
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
             }
-            glassButton(title: "reload", icon: "arrow.clockwise") {
+            glassButton(title: String(localized:"reload"), icon: "arrow.clockwise") {
                 Task { await vm.load() }
             }
         }

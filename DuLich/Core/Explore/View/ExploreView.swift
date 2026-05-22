@@ -65,7 +65,6 @@ struct ExploreView: View {
                                 .padding(.horizontal, 20)
                                 .padding(.top, 4)
 
-                                // Listings
                                 LazyVStack(spacing: 16) {
                                     ForEach(viewModel.listings) { listing in
                                         NavigationLink(value: listing) {
@@ -87,7 +86,6 @@ struct ExploreView: View {
                         }
                     }
 
-                    // ── Admin FAB: nút thêm khách sạn ────────────────────
                     if authState.isAdmin {
                         adminAddButton
                     }
@@ -99,7 +97,6 @@ struct ExploreView: View {
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(Color(white: 0.10))
                     }
-                    // Admin badge ở navigation bar
                     if authState.isAdmin {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             adminBadge
@@ -112,7 +109,6 @@ struct ExploreView: View {
                 }
                 .sheet(isPresented: $showAddHotel) {
                     AddHotelView {
-                        // Reload listings sau khi thêm thành công
                         Task { await viewModel.loadListings() }
                     }
                 }
@@ -120,20 +116,17 @@ struct ExploreView: View {
         }
     }
 
-    // MARK: - Admin FAB
     private var adminAddButton: some View {
         Button {
             showAddHotel = true
         } label: {
             ZStack {
-                // Shadow circle
                 Circle()
                     .fill(Color(red: 0.15, green: 0.40, blue: 0.90).opacity(0.30))
                     .frame(width: 64, height: 64)
                     .blur(radius: 10)
                     .offset(y: 4)
 
-                // Main button
                 Circle()
                     .fill(LinearGradient(
                         colors: [
@@ -148,7 +141,6 @@ struct ExploreView: View {
                         Circle().strokeBorder(Color.white.opacity(0.45), lineWidth: 1.2)
                     )
 
-                // Glass sheen
                 Circle()
                     .fill(LinearGradient(
                         colors: [Color.white.opacity(0.30), Color.clear],
@@ -166,7 +158,6 @@ struct ExploreView: View {
         .transition(.scale.combined(with: .opacity))
     }
 
-    // MARK: - Admin Badge (toolbar)
     private var adminBadge: some View {
         HStack(spacing: 4) {
             Image(systemName: "shield.checkered")
@@ -185,7 +176,6 @@ struct ExploreView: View {
     }
 }
 
-// MARK: – Glass Search Bar (giữ nguyên)
 private struct GlassSearchBar: View {
     var body: some View {
         HStack(spacing: 10) {

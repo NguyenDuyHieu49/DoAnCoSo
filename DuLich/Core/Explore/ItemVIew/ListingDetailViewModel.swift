@@ -27,6 +27,8 @@ final class ListingDetailViewModel: ObservableObject {
     @Published var alertMessage: String = ""
     @Published var navigateToHistory: Bool = false
     @Published var currentReviewIndex: Int = 0
+    @Published var selectedRoomNumber: String? = nil
+
 
     func toggleLike(reviewId: String) {
         if let idx = reviews.firstIndex(where: { $0.id == reviewId }) {
@@ -93,11 +95,13 @@ final class ListingDetailViewModel: ObservableObject {
                 "hotelName": listing.title,
                 "hotelAddress": listing.address,
                 "roomType": selectedRoom,
+                "roomNumber": selectedRoomNumber ?? "",  
                 "price": price,
                 "currency": "VND",
                 "checkIn": Timestamp(date: checkInDate),
                 "checkOut": Timestamp(date: checkOutDate),
-                "createdAt": Timestamp(date: Date())
+                "createdAt": Timestamp(date: Date()),
+                "status": "active"
             ]
             try await bookingRef.setData(bookingData)
             NotificationCenter.default.post(name: .didCreateBooking, object: nil, userInfo: [

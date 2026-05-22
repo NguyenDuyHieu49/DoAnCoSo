@@ -202,7 +202,7 @@ final class BookingDetailViewModel: ObservableObject {
         }
 
         guard let id = bookingId else {
-            errorMessage = "Không có booking để hiển thị."
+            errorMessage = String(localized:"no_booking_displayed")
             return
         }
 
@@ -212,7 +212,7 @@ final class BookingDetailViewModel: ObservableObject {
                 self.booking = fetched
                 parseMeta(from: fetched)
             } else {
-                errorMessage = "Không tìm thấy booking."
+                errorMessage = String(localized:"booking_not_found")
             }
         } catch {
             errorMessage = error.localizedDescription
@@ -226,11 +226,11 @@ final class BookingDetailViewModel: ObservableObject {
 
         do {
             try await BookingManager.shared.cancelBooking(bookingId: id)
-            infoMessage = "Huỷ đặt phòng thành công."
+            infoMessage = String(localized:"successfully_cancelled")
             didCancelSuccessfully = true
             showInfoAlert = true
         } catch {
-            infoMessage = "Huỷ thất bại: \(error.localizedDescription)"
+            infoMessage = String(localized:"cancel_failed: \(error.localizedDescription)")
             didCancelSuccessfully = false
             showInfoAlert = true
         }

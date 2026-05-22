@@ -16,18 +16,25 @@ struct ListingItemView: View {
 
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text("\(listing.address), \(listing.city)")
-                        .fontWeight(.semibold)
+                    Text("\(listing.title)")
+                        .fontWeight(.regular)
+                        .font(.subheadline)
                         .foregroundColor(.teal)
+                    Text("\(listing.address), \(listing.city)")
+                        .fontWeight(.light)
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                        .font(.system(size: 12))
+                        .minimumScaleFactor(0.5)
                 }
                 Spacer()
                 HStack(spacing: 2) {
                     Image(systemName: "star.fill")
                     Text("\(listing.rating, specifier: "%.1f") stars")
+                        .font(.footnote)
                 }
                 .foregroundColor(.yellow)
             }
-            .font(.footnote)
         }
         .padding()
         .contentShape(Rectangle())

@@ -43,15 +43,15 @@ enum ListingFeatures: Int, Codable, Identifiable, Hashable {
     
     var title: String {
         switch self {
-        case .selfCheckIn: return "checkin_big"
-        case .superHost: return "hotel_quality_big"
+        case .selfCheckIn: return String(localized: "checkin_big")
+        case .superHost: return String(localized: "hotel_quality_big")
         }
     }
     
     var subtitle: String {
         switch self {
-        case .selfCheckIn: return "checkin_small"
-        case .superHost: return "hotel_quality_small"
+        case .selfCheckIn: return String(localized: "checkin_small")
+        case .superHost: return String(localized:"hotel_quality_small")
         }
     }
     var id: Int { return self.rawValue}
@@ -65,14 +65,14 @@ enum ListingAmenities: Int, Codable, Identifiable, Hashable {
     case tivi
     case pool
     
-    var title: String {
+    var title: LocalizedStringKey {
         switch self {
-        case .pool: return "Swimming Pool"
-        case .airConditioning: return "Air Conditioning"
-        case .breakfast: return "Free Breakfast"
-        case .tivi: return "TV"
-        case .parking: return "Parking"
-        case .wifi: return "Free Wi-Fi"
+        case .pool: return "swimming_pool"
+        case .airConditioning: return "air_conditioner"
+        case .breakfast: return "break_fast"
+        case .tivi: return "t_v"
+        case .parking: return "park_ing"
+        case .wifi: return "wi_fi"
         }
     }
     

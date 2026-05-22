@@ -1,10 +1,8 @@
 import SwiftUI
 import MapKit
-
 extension Notification.Name {
     static let didCreateBooking = Notification.Name("didCreateBooking")
 }
-
 struct ListingDetailView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var viewModel = ListingDetailViewModel()
@@ -12,7 +10,7 @@ struct ListingDetailView: View {
     @State private var showMap: MapCameraPosition
     @State private var showRoomDetail: Bool = false
     @State private var isComposingReview: Bool = false
-    
+
   
     init(listing: Listing) {
         self.listing = listing
@@ -26,6 +24,7 @@ struct ListingDetailView: View {
     }
 
     var body: some View {
+        
         ZStack {
             Glass.pageBg.ignoresSafeArea()
             Circle()
@@ -54,9 +53,18 @@ struct ListingDetailView: View {
         .overlay(alignment: .bottom) { bookingBar }
         .sheet(isPresented: $showRoomDetail) {
             if let room = viewModel.selectedRoom, let price = listing.pricePerNight?[room] {
-                RoomDetailView(roomName: room, price: Double(price), listing: listing)
+                RoomDetailView(
+                    roomName: room,
+                    price: Double(price),
+                    listing: listing,
+                    checkInDate: viewModel.checkInDate,
+                    checkOutDate: viewModel.checkOutDate
+                ) { roomNumber in
+                    viewModel.selectedRoomNumber = roomNumber
+                }
             }
         }
+
         .sheet(isPresented: $isComposingReview) {
             ReviewComposerView { authorName, rating, comment in
                 viewModel.submitReview(authorName: authorName, rating: rating, comment: comment)
@@ -316,7 +324,7 @@ struct ListingDetailView: View {
     private var featuresCard: some View {
         VStack(alignment: .leading, spacing: 0) {
                  VStack(alignment: .leading, spacing: 14) {
-                SectionHeader(title: "Outstanding features")
+                SectionHeader(title: String(localized: "outstanding_feature"))
                 ForEach(Array(listing.features.enumerated()), id: \.element.id) { idx, feature in
                     if idx > 0 {
                         Rectangle()
@@ -374,7 +382,7 @@ struct ListingDetailView: View {
      
     private var roomSelectionCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            SectionHeader(title: "Select room type")
+            SectionHeader(title: String(localized: "select_room_type"))
             if let roomPrices = listing.pricePerNight {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
@@ -424,7 +432,7 @@ struct ListingDetailView: View {
 
     private var datepickerCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            SectionHeader(title: "Select dates of stay")
+            SectionHeader(title: String(localized: "select_date_stay"))
             HStack(spacing: 10) {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 4) {
@@ -473,7 +481,7 @@ struct ListingDetailView: View {
 
     private var amenitiesCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            SectionHeader(title: "Amenities")
+            SectionHeader(title: String(localized: "amenity_provided"))
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                 ForEach(listing.amenities, id: \.self) { amenity in
                     HStack(spacing: 8) {
@@ -502,7 +510,7 @@ struct ListingDetailView: View {
 
     private var mapCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Location")
+            SectionHeader(title: String(localized: "location"))
             Map(position: $showMap)
                 .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: Glass.cornerMd))

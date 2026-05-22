@@ -14,6 +14,7 @@ struct DBBooking: Identifiable, Hashable {
     let checkIn: Date
     let checkOut: Date
     let createdAt: Date?
+    let roomNumber: Int?
 
     init(id: String,
          userId: String,
@@ -25,7 +26,8 @@ struct DBBooking: Identifiable, Hashable {
          currency: String = "VND",
          checkIn: Date,
          checkOut: Date,
-         createdAt: Date? = nil) {
+         createdAt: Date? = nil,
+         roomNumber: Int? = nil) {
         self.id = id
         self.userId = userId
         self.hotelId = hotelId
@@ -37,6 +39,7 @@ struct DBBooking: Identifiable, Hashable {
         self.checkIn = checkIn
         self.checkOut = checkOut
         self.createdAt = createdAt
+        self.roomNumber = roomNumber
     }
 
     init(id: String, data: [String: Any]) throws {
@@ -48,6 +51,7 @@ struct DBBooking: Identifiable, Hashable {
         self.roomType = data["roomType"] as? String ?? "Unknown"
         self.price = (data["price"] as? Double) ?? (data["price"] as? NSNumber)?.doubleValue ?? 0
         self.currency = data["currency"] as? String ?? "VND"
+        self.roomNumber = data["roomNumber"] as? Int
 
         if let ts = data["checkIn"] as? Timestamp { self.checkIn = ts.dateValue() }
         else if let d = data["checkIn"] as? Date { self.checkIn = d }
