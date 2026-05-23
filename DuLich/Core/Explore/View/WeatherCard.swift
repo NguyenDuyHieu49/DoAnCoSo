@@ -2,7 +2,6 @@
 //  WeatherCard.swift
 //  DuLich
 //
-//  Redesigned with Glassmorphism – iOS light theme
 //
 
 import SwiftUI

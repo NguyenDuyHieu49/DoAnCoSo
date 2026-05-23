@@ -1,5 +1,4 @@
 // ExploreView.swift
-// Thêm nút "+" cho Admin để mở AddHotelView
 
 import SwiftUI
 import Combine
@@ -7,10 +6,13 @@ import Combine
 struct ExploreView: View {
     @State private var showDestinationSearch = false
     @StateObject var viewModel = ExploreViewModel(service: ExploreService())
-    @StateObject var weatherVM = WeatherViewModel()
     @State private var showWeatherDetail = false
     @State private var showAddHotel = false         
-
+    @State private var selectedWeatherIndex = 0
+    @StateObject var weatherHN  = WeatherViewModel()
+    @StateObject var weatherHCM = WeatherViewModel()
+    @StateObject var weatherHP  = WeatherViewModel()
+    @StateObject var weatherCT  = WeatherViewModel()
     @EnvironmentObject private var authState: AuthState
 
     var body: some View {
@@ -44,14 +46,31 @@ struct ExploreView: View {
                                         }
                                     }
 
-                                WeatherCard(viewModel: weatherVM)
-                                    .onAppear {
-                                        Task { await weatherVM.fetchWeather(for: "Hanoi") }
+                                TabView(selection: $selectedWeatherIndex) {
+                                    WeatherCard(viewModel: weatherHN).tag(0)
+                                    WeatherCard(viewModel: weatherHCM).tag(1)
+                                    WeatherCard(viewModel: weatherHP).tag(2)
+                                    WeatherCard(viewModel: weatherCT).tag(3)
+                                }
+                                .tabViewStyle(.page(indexDisplayMode: .always))
+                                .frame(height: 130)
+                                .task {
+                                    async let t1: () = weatherHN.fetchWeather(for: "Hanoi")
+                                    async let t2: () = weatherHCM.fetchWeather(for: "Ho Chi Minh City")
+                                    async let t3: () = weatherHP.fetchWeather(for: "Haiphong")
+                                    async let t4: () = weatherCT.fetchWeather(for: "Can Tho")
+                                    _ = await (t1, t2, t3, t4)
+                                }
+                                .onTapGesture { showWeatherDetail = true }
+                                .sheet(isPresented: $showWeatherDetail) {
+                                    switch selectedWeatherIndex {
+                                    case 0: WeatherDetailView(viewModel: weatherHN)
+                                    case 1: WeatherDetailView(viewModel: weatherHCM)
+                                    case 2: WeatherDetailView(viewModel: weatherHP)
+                                    case 3: WeatherDetailView(viewModel: weatherCT)
+                                    default: WeatherDetailView(viewModel: weatherHN)
                                     }
-                                    .onTapGesture { showWeatherDetail = true }
-                                    .sheet(isPresented: $showWeatherDetail) {
-                                        WeatherDetailView(viewModel: weatherVM)
-                                    }
+                                }
 
                                 HStack {
                                     Text("Gợi ý cho bạn")

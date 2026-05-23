@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// MARK: – Rain Effect
 struct RainEffect: View {
     @State private var offsetY: CGFloat = -200
 
@@ -109,7 +108,6 @@ struct OvercastEffect: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                // Dải mây trên
                 Ellipse()
                     .fill(
                         LinearGradient(
@@ -125,7 +123,6 @@ struct OvercastEffect: View {
                     .offset(x: offsetX - geo.size.width * 0.10, y: geo.size.height * 0.20)
                     .blur(radius: 6)
 
-                // Dải mây dưới
                 Ellipse()
                     .fill(
                         LinearGradient(

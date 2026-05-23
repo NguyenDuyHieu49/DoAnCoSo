@@ -21,7 +21,7 @@ class WeatherViewModel: ObservableObject {
     @Published var weatherMain: String = "Unknown"
     
     func fetchWeather(for city: String) async {
-        let apiKey = "8ff885aa6cce5897224ccf0665e7199d" // tốt hơn: load từ config
+        let apiKey = "8ff885aa6cce5897224ccf0665e7199d" 
         let cityEscaped = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? city
         let currentLang = Locale.current.language.languageCode?.identifier ?? "en"
         let urlString = """

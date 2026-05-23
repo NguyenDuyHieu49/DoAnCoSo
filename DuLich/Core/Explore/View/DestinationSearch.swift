@@ -87,7 +87,7 @@ struct DestinationSearch: View {
                         ) {
                             withAnimation(.snappy) { selectedOption = .location }
                         } collapsedContent: {
-                            ExtractedView(title: "Địa điểm", description: destination.isEmpty ? "Thêm địa điểm" : destination)
+                            ExtractedView(title: "loca_tion", description: destination.isEmpty ? "add_location" : LocalizedStringKey(destination))
                         } expandedContent: {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Địa điểm cần tìm")
@@ -208,7 +208,6 @@ struct DestinationSearch: View {
 
                         Spacer(minLength: 24)
 
-                        // MARK: – Search button
                         Button {
                             onSearch(destination)
                             show = false
@@ -332,9 +331,8 @@ struct GlassSearchCard<Collapsed: View, Expanded: View>: View {
     }
 }
 
-// MARK: – DatePicker row
 struct DatePickerRow: View {
-    let label: String
+    let label: LocalizedStringKey
     @Binding var selection: Date
 
     var body: some View {
@@ -346,8 +344,8 @@ struct DatePickerRow: View {
 }
 
 struct ExtractedView: View {
-    let title: String
-    let description: String
+    let title: LocalizedStringKey
+    let description: LocalizedStringKey
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
