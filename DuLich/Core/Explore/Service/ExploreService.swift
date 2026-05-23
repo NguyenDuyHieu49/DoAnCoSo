@@ -6,8 +6,7 @@ class ExploreService {
 
     private let db = Firestore.firestore()
 
-    func fecthListings() async throws -> [Listing] {
-        // 1. Thử lấy từ Firestore trước
+    func fetchListings() async throws -> [Listing] {
         let snapshot = try await db.collection("hotels")
             .order(by: "createdAt", descending: true)
             .getDocuments()
@@ -19,7 +18,6 @@ class ExploreService {
             guard let title = data["title"] as? String,
                   let city  = data["city"]  as? String else { return nil }
 
-            // pricePerNight: [String: Any] → [String: Int]
             var pricePerNight: [String: Int] = [:]
             if let raw = data["pricePerNight"] as? [String: Any] {
                 for (key, val) in raw {

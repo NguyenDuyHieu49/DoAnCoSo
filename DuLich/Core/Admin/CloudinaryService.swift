@@ -12,7 +12,6 @@ struct CloudinaryService {
     private static let cloudName = "dmc7g558o"
     private static let uploadPreset = "Dulich"
     
-    /// Upload 1 ảnh lên Cloudinary, trả về URL string
     static func uploadImage(_ image: UIImage) async throws -> String {
         guard let data = image.jpegData(compressionQuality: 0.8) else {
             throw NSError(domain: "Cloudinary", code: -1,
