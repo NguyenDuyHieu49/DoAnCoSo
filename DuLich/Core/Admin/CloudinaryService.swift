@@ -27,7 +27,6 @@ struct CloudinaryService {
         
         var body = Data()
         
-        // upload_preset field
         body.append("--\(boundary)\r\n".data(using: .utf8)!)
         body.append("Content-Disposition: form-data; name=\"upload_preset\"\r\n\r\n".data(using: .utf8)!)
         body.append("\(uploadPreset)\r\n".data(using: .utf8)!)

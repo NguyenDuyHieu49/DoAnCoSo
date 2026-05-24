@@ -10,7 +10,7 @@ final class AuthState: ObservableObject {
     @Published var isAnonymous: Bool = false
     @Published var uid: String? = nil
     @Published var email: String? = nil
-    @Published var userRole: UserRole = .user   // ← role hiện tại của user
+    @Published var userRole: UserRole = .user   
 
     private var handle: AuthStateDidChangeListenerHandle?
 
@@ -32,7 +32,6 @@ final class AuthState: ObservableObject {
                     self.isSignedIn  = true
                     self.uid         = u.uid
                     self.email       = u.email
-                    // Fetch role từ Firestore
                     await self.fetchUserRole(uid: u.uid)
                 } else {
                     self.isAnonymous = false
@@ -66,7 +65,6 @@ final class AuthState: ObservableObject {
         }
     }
 
-    /// Gọi sau khi admin đăng nhập thành công bằng mật khẩu admin
     func upgradeToAdmin() {
         self.userRole = .admin
     }

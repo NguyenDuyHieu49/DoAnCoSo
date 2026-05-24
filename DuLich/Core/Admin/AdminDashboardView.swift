@@ -49,13 +49,12 @@ struct AdminDashboardView: View {
                         RoundedRectangle(cornerRadius: 18)
                             .fill(.ultraThinMaterial)
                             .overlay(RoundedRectangle(cornerRadius: 18)
-                                .fill(Color.white.opacity(0.30)))
+                                .fill(Color(.systemBackground).opacity(0.30)))
                             .overlay(RoundedRectangle(cornerRadius: 18)
-                                .strokeBorder(Color.white.opacity(0.6), lineWidth: 0.8))
+                                .strokeBorder(Color(.systemBackground).opacity(0.6), lineWidth: 0.8))
                     )
                     .shadow(color: Color.black.opacity(0.07), radius: 10, x: 0, y: 4)
 
-                    // Nút thêm khách sạn
                     Button {
                         showAddHotel = true
                     } label: {
@@ -80,7 +79,6 @@ struct AdminDashboardView: View {
                         )
                     }
 
-                    // Danh sách khách sạn
                     if isLoading {
                         ProgressView()
                             .padding(.top, 40)
@@ -164,9 +162,9 @@ struct AdminDashboardView: View {
             RoundedRectangle(cornerRadius: 14)
                 .fill(.ultraThinMaterial)
                 .overlay(RoundedRectangle(cornerRadius: 14)
-                    .fill(Color.white.opacity(0.30)))
+                    .fill(Color(.systemBackground).opacity(0.30)))
                 .overlay(RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(Color.white.opacity(0.5), lineWidth: 0.8))
+                    .strokeBorder(Color(.systemBackground).opacity(0.5), lineWidth: 0.8))
         )
         .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 3)
     }

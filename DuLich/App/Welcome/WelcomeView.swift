@@ -2,13 +2,11 @@
 //  WelcomeView.swift
 //  DuLich
 //
-//
-
 import SwiftUI
 
 struct WelcomeView: View {
     var onFinish: (() -> Void)?
-
+    @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var authState: AuthState
     @State private var selection: Int = 0
     @State private var showSignIn: Bool = false
@@ -84,7 +82,7 @@ struct WelcomeView: View {
                     HStack(spacing: 8) {
                         ForEach(0..<pages.count, id: \.self) { i in
                             Capsule()
-                                .fill(i == selection ? Color.white : Color.white.opacity(0.40))
+                                .fill(i == selection ? Color(.systemBackground) : Color(.systemBackground).opacity(0.40))
                                 .frame(width: i == selection ? 22 : 8, height: 8)
                                 .animation(.spring(response: 0.35, dampingFraction: 0.70), value: selection)
                         }
@@ -94,13 +92,13 @@ struct WelcomeView: View {
                     VStack(spacing: 8) {
                         Text(pages[selection].title)
                             .font(.system(size: 22, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(.label))
                             .multilineTextAlignment(.center)
                             .shadow(color: Color.black.opacity(0.10), radius: 4, x: 0, y: 2)
 
                         Text(pages[selection].subtitle)
                             .font(.system(size: 14, weight: .regular, design: .rounded))
-                            .foregroundColor(Color.white.opacity(0.78))
+                            .foregroundColor(Color(.secondaryLabel).opacity(0.78))
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 32)
                     }
@@ -136,12 +134,12 @@ struct WelcomeView: View {
                             .frame(height: 52)
                             .background(
                                 RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color.white.opacity(0.92))
+                                    .fill(Color(.systemBackground).opacity(0.92))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 16)
-                                            .strokeBorder(Color.white, lineWidth: 1.0)
+                                            .strokeBorder(Color(.systemBackground), lineWidth: 1.0)
                                     )
-                                    .shadow(color: Color.black.opacity(0.10), radius: 10, x: 0, y: 5)
+                                    .shadow(color: Color(.systemBackground).opacity(0.10), radius: 10, x: 0, y: 5)
                             )
                         }
 
@@ -155,7 +153,7 @@ struct WelcomeView: View {
                                     Text("Đăng nhập")
                                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                                 }
-                                .foregroundColor(.white)
+                                .foregroundColor(Color(.label))
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 50)
                                 .background(
@@ -163,7 +161,11 @@ struct WelcomeView: View {
                                         .fill(.ultraThinMaterial)
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 14)
-                                                .fill(Color.white.opacity(0.18))
+                                                .fill(
+                                                    colorScheme == .dark
+                                                    ? Color.white.opacity(0.08)
+                                                    : Color.white.opacity(0.18)
+                                                )
                                         )
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 14)
@@ -183,7 +185,7 @@ struct WelcomeView: View {
                                     Text("Dùng thử")
                                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                                 }
-                                .foregroundColor(Color.white.opacity(0.80))
+                                .foregroundColor(Color(.secondaryLabel).opacity(0.80))
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 50)
                                 .background(
@@ -214,4 +216,9 @@ struct WelcomeView: View {
             }
         }
     }
+}
+#Preview {
+
+    WelcomeView()
+        .environmentObject(AuthState())
 }

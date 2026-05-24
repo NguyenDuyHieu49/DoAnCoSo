@@ -44,7 +44,7 @@ struct SignInEmailView: View {
                             .font(.system(size: 56, weight: .thin))
                             .foregroundStyle(
                                 LinearGradient(
-                                    colors: [Color.white, Color.white.opacity(0.8)],
+                                    colors: [Color(.systemBackground), Color(.systemBackground).opacity(0.8)],
                                     startPoint: .top, endPoint: .bottom
                                 )
                             )
@@ -170,7 +170,6 @@ struct SignInEmailView: View {
             }
         } label: {
             HStack(spacing: 12) {
-                // Icon
                 ZStack {
                     Circle()
                         .fill(viewModel.isAdminMode
@@ -181,7 +180,7 @@ struct SignInEmailView: View {
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(viewModel.isAdminMode
                                          ? Color(red: 0.9, green: 0.65, blue: 0.1)
-                                         : Color.white.opacity(0.7))
+                                         : Color(.systemBackground).opacity(0.7))
                 }
  
                 VStack(alignment: .leading, spacing: 2) {
@@ -195,7 +194,6 @@ struct SignInEmailView: View {
  
                 Spacer()
  
-                // Custom toggle indicator
                 ZStack {
                     Capsule()
                         .fill(viewModel.isAdminMode

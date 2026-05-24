@@ -61,7 +61,7 @@ struct BookingDetailView: View {
             Task { await vm.load(booking: booking, bookingId: bookingId) }
         }
         .alert("Xác nhận", isPresented: $vm.showCancelConfirm) {
-            Button("Huỷ đặt", role: .destructive) {
+            Button(String(localized: "cancel_room"), role: .destructive) {
                 Task { await vm.cancelBooking() }
             }
             Button("Hủy", role: .cancel) {}
@@ -79,7 +79,6 @@ struct BookingDetailView: View {
     private func content(for booking: DBBooking) -> some View {
         ScrollView {
             VStack(spacing: 16) {
-                // Hotel / place info
                 VStack(alignment: .leading, spacing: 8) {
                     Text(booking.hotelName)
                         .font(.title2)
