@@ -63,5 +63,11 @@ class ExploreViewModel: ObservableObject {
         
         listings = filtered
     }
+    var groupedListings: [(city: String, listings: [Listing])] {
+        let cities = Array(Set(listings.map { $0.city })).sorted()
+        return cities.map { city in
+            (city: city, listings: listings.filter { $0.city == city })
+        }
+    }
 }
 

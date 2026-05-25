@@ -95,9 +95,9 @@ struct ExploreView: View {
 }
 
 extension ExploreView {
-
+    
     private var backgroundGradient: some View {
-
+        
         LinearGradient(
             colors: [
                 Color(red: 0.52, green: 0.76, blue: 0.96),
@@ -109,11 +109,11 @@ extension ExploreView {
         )
         .ignoresSafeArea()
     }
-
+    
     private var weatherSection: some View {
-
+        
         TabView(selection: $selectedWeatherIndex) {
-
+            
             WeatherCard(viewModel: weatherHN).tag(0)
             WeatherCard(viewModel: weatherHCM).tag(1)
             WeatherCard(viewModel: weatherHP).tag(2)
@@ -121,144 +121,149 @@ extension ExploreView {
         }
         .tabViewStyle(.page(indexDisplayMode: .always))
         .frame(height: 130)
-
+        
         .task {
             async let t1: () = weatherHN.fetchWeather(for: "Hanoi")
             async let t2: () = weatherHCM.fetchWeather(for: "Ho Chi Minh City")
             async let t3: () = weatherHP.fetchWeather(for: "Haiphong")
             async let t4: () = weatherCT.fetchWeather(for: "Can Tho")
-
+            
             _ = await (t1, t2, t3, t4)
         }
-
+        
         .onTapGesture {
             showWeatherDetail = true
         }
-
+        
         .sheet(isPresented: $showWeatherDetail) {
-
+            
             switch selectedWeatherIndex {
-
+                
             case 0:
                 WeatherDetailView(viewModel: weatherHN)
-
+                
             case 1:
                 WeatherDetailView(viewModel: weatherHCM)
-
+                
             case 2:
                 WeatherDetailView(viewModel: weatherHP)
-
+                
             case 3:
                 WeatherDetailView(viewModel: weatherCT)
-
+                
             default:
                 WeatherDetailView(viewModel: weatherHN)
             }
         }
     }
-
+    
     private var listingsHeader: some View {
-
+        
         HStack {
-
+            
             Text("Gợi ý cho bạn")
                 .font(.system(size: 17, weight: .semibold, design: .rounded))
                 .foregroundColor(Color(white: 0.12))
-
-            Spacer()
-
-            Text("\(viewModel.listings.count) địa điểm")
-                .font(.system(size: 12, weight: .medium, design: .rounded))
-                .foregroundColor(Color(white: 0.45))
+                .frame(alignment: .leading)
         }
         .padding(.horizontal, 20)
         .padding(.top, 4)
     }
-
+    
     private var listingsSection: some View {
-
         Group {
-
             if viewModel.listings.isEmpty {
-
                 VStack(spacing: 16) {
-
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 48))
                         .foregroundColor(Color(white: 0.6))
-
-                    Text(String(localized: "there_no_destination" ))
+                    
+                    Text(String(localized: "there_no_destination"))
                         .font(.system(size: 15, weight: .medium, design: .rounded))
                         .foregroundColor(Color(white: 0.45))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
-
+                    
                     Button {
-
                         viewModel.searchDestination("")
-
                     } label: {
-
-                        Text(String(localized:"view_all"))
+                        Text(String(localized: "view_all"))
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
                             .foregroundColor(Color(red: 0.15, green: 0.45, blue: 0.90))
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
-
                             .background(
                                 Capsule()
                                     .fill(Color(red: 0.15, green: 0.45, blue: 0.90).opacity(0.10))
-
-                                    .overlay(
-                                        Capsule()
-                                            .strokeBorder(
-                                                Color(red: 0.15, green: 0.45, blue: 0.90).opacity(0.30),
-                                                lineWidth: 1
-                                            )
-                                    )
+                                    .overlay(Capsule()
+                                        .strokeBorder(Color(red: 0.15, green: 0.45, blue: 0.90).opacity(0.30), lineWidth: 1))
                             )
                     }
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.top, 60)
                 .padding(.bottom, 32)
-
+                
             } else {
-
-                LazyVStack(spacing: 16) {
-
-                    ForEach(viewModel.listings) { listing in
-
-                        NavigationLink(value: listing) {
-
-                            ListingItemView(listing: listing)
-                                .frame(height: 400)
-                                .clipShape(RoundedRectangle(cornerRadius: 20))
-
-                                .shadow(
-                                    color: Color.black.opacity(0.10),
-                                    radius: 12,
-                                    x: 0,
-                                    y: 6
-                                )
-
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .strokeBorder(
-                                            Color.white.opacity(0.45),
-                                            lineWidth: 0.8
+                VStack(alignment: .leading) {
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 14) {
+                            ForEach(viewModel.listings) { listing in
+                                NavigationLink(value: listing) {
+                                    ListingItemView(listing: listing)
+                                        .frame(width: 280, height: 340)
+                                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                                        .shadow(color: Color.black.opacity(0.10), radius: 12, x: 0, y: 6)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .strokeBorder(Color.white.opacity(0.45), lineWidth: 0.8)
                                         )
-                                )
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 4)
+                    }
+                    
+                    ForEach(viewModel.groupedListings, id: \.city) { group in
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack {
+                                Image(systemName: "mappin.circle.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(Color(red: 0.2, green: 0.45, blue: 0.95))
+                                Text(String(localized: "hotel_in \(group.city)"))
+                                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                    .foregroundColor(Color(white: 0.12))
+                            }
+                            .padding(.horizontal, 20)
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 14) {
+                                    ForEach(group.listings) { listing in
+                                        NavigationLink(value: listing) {
+                                            ListingItemView(listing: listing)
+                                                .frame(width: 280, height: 340)
+                                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                                .shadow(color: Color.black.opacity(0.10), radius: 12, x: 0, y: 6)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 20)
+                                                        .strokeBorder(Color.white.opacity(0.45), lineWidth: 0.8)
+                                                )
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 4)
+                            }
                         }
                     }
+                    .padding(.bottom, authState.isAdmin ? 90 : 32)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, authState.isAdmin ? 90 : 32)
             }
         }
     }
 }
-
 extension ExploreView {
 
     private var adminAddButton: some View {
