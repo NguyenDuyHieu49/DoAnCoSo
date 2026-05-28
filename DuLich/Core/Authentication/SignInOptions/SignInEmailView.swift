@@ -8,6 +8,7 @@ struct SignInEmailView: View {
  
     @State private var isLoading = false
     @State private var showAdminPasswordField = false
+    @State private var errorMessage: String? = nil
  
     var body: some View {
         ZStack {
@@ -67,7 +68,6 @@ struct SignInEmailView: View {
  
                     VStack(spacing: 18) {
  
-                        // Email field
                         inputField(
                             label: "Email",
                             icon: "envelope",
@@ -77,7 +77,6 @@ struct SignInEmailView: View {
                             secure: false
                         )
  
-                        // Password field
                         inputField(
                             label: "Password",
                             icon: "lock",
@@ -87,10 +86,8 @@ struct SignInEmailView: View {
                             secure: true
                         )
  
-                        // ── Admin Toggle ────────────────────────────────────
                         adminToggleRow
  
-                        // ── Admin Password field (animated) ─────────────────
                         if viewModel.isAdminMode {
                             VStack(alignment: .leading, spacing: 6) {
                                 Label("Mật khẩu Admin", systemImage: "key.fill")
@@ -131,7 +128,6 @@ struct SignInEmailView: View {
                             ))
                         }
  
-                        // ── Sign In Button ───────────────────────────────────
                         signInButton
                     }
                     .padding(24)
@@ -236,22 +232,36 @@ struct SignInEmailView: View {
                 defer { isLoading = false }
 
                 do { try await viewModel.signup() }
-                catch {
-                    do { try await viewModel.signin() }
-                    catch {
-                        print("[SignInEmailView] signin error:", error)
-                        return
+                catch let signupError as NSError {
+                    if signupError.code == AuthErrorCode.emailAlreadyInUse.rawValue {
+                        do { try await viewModel.signin() }
+                        catch let signinError as NSError {
+                            if signinError.code == AuthErrorCode.wrongPassword.rawValue
+                                || signinError.code == AuthErrorCode.invalidCredential.rawValue {
+                                errorMessage = String(localized: "email_existed_wrong_password")
+                            } else {
+                                errorMessage = signinError.localizedDescription
+                            }
+                            return
+                        }
+                    } else {
+                        do { try await viewModel.signin() }
+                        catch {
+                            errorMessage = String(localized: "email_existed_wrong_password")
+                            return
+                        }
                     }
                 }
 
                 if viewModel.isAdminMode {
                     guard let uid = FirebaseAuth.Auth.auth().currentUser?.uid else { return }
                     let ok = await viewModel.verifyAdminAndUpgrade(uid: uid)
-                    print("[SignIn] verifyAdminAndUpgrade result:", ok)  // ← thêm
+                    print("[SignIn] verifyAdminAndUpgrade result:", ok)
                     if !ok { return }
                     authState.upgradeToAdmin()
-                    print("[SignIn] authState.userRole after upgrade:", authState.userRole)  // ← thêm
+                    print("[SignIn] authState.userRole after upgrade:", authState.userRole)
                 }
+
                 showSignInView = false
             }
         } label: {
@@ -272,14 +282,14 @@ struct SignInEmailView: View {
                                 : Color(red: 0.2, green: 0.45, blue: 0.95)).opacity(0.45),
                         radius: 12, x: 0, y: 6
                     )
- 
+
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(LinearGradient(
                         colors: [Color.white.opacity(0.25), Color.white.opacity(0.0)],
                         startPoint: .top, endPoint: .center
                     ))
                     .frame(height: 54)
- 
+
                 if isLoading {
                     ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .white))
                 } else {
@@ -297,9 +307,15 @@ struct SignInEmailView: View {
         .disabled(isLoading)
         .padding(.top, 4)
         .animation(.spring(response: 0.35), value: viewModel.isAdminMode)
+        .alert("Thông báo", isPresented: .init(
+            get: { errorMessage != nil },
+            set: { if !$0 { errorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { errorMessage = nil }
+        } message: {
+            Text(errorMessage ?? "")
+        }
     }
- 
-    // MARK: - Reusable input field
     @ViewBuilder
     private func inputField(
         label: String,
@@ -341,7 +357,6 @@ struct SignInEmailView: View {
         }
     }
  
-    // MARK: - Glass card background
     private var glassCard: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 28, style: .continuous)

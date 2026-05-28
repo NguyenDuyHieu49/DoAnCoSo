@@ -1316,6 +1316,17 @@
         }
       }
     },
+    "email_existed_wrong_password" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email existed. Your password is wrong. Please try again or change another email!"
+          }
+        }
+      }
+    },
     "enter_adress" : {
       "localizations" : {
         "en" : {
