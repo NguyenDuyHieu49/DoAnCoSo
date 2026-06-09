@@ -40,11 +40,13 @@ final class HistoryViewModel: ObservableObject {
 
         guard let uid = Auth.auth().currentUser?.uid else {
             bookings = []
-            errorMessage = "Người dùng chưa đăng nhập."
+            errorMessage = String(localized: "user_not_logged_in")
             return
         }
 
         do {
+            try await BookingManager.shared.processNoShowCancellations(forUserId: uid)
+
             let snapshot = try await db.collection("bookings")
                 .whereField("userId", isEqualTo: uid)
                 .getDocuments()
@@ -53,8 +55,8 @@ final class HistoryViewModel: ObservableObject {
             items.reserveCapacity(snapshot.documents.count)
 
             for doc in snapshot.documents {
-                if let manual = try? manualDecode(doc: doc) {
-                    items.append(manual)
+                if let booking = try? DBBooking(id: doc.documentID, data: doc.data()) {
+                    items.append(booking)
                 } else {
                     print("Warning: unable to decode booking doc \(doc.documentID)")
                 }
@@ -66,7 +68,7 @@ final class HistoryViewModel: ObservableObject {
                 return aDate > bDate
             }
         } catch {
-            errorMessage = "Lỗi khi tải lịch sử: \(error.localizedDescription)"
+            errorMessage = String(localized: "history_load_error \(error.localizedDescription)")
             bookings = []
         }
     }
@@ -74,7 +76,8 @@ final class HistoryViewModel: ObservableObject {
     private func insertBookingById(_ bookingId: String) async {
         do {
             let doc = try await db.collection("bookings").document(bookingId).getDocument()
-            if let booking = try? manualDecode(doc: doc) {
+            if let data = doc.data(),
+               let booking = try? DBBooking(id: doc.documentID, data: data) {
                 upsertBooking(booking)
             } else {
                 await load()
@@ -93,53 +96,4 @@ final class HistoryViewModel: ObservableObject {
         }
     }
 
-    private func manualDecode(doc: DocumentSnapshot) throws -> DBBooking? {
-        let data = doc.data() ?? [:]
-
-        guard let userId = data["userId"] as? String else { return nil }
-        guard let hotelId = data["hotelId"] as? String else { return nil }
-        guard let hotelName = data["hotelName"] as? String else { return nil }
-
-        let id = doc.documentID
-        let hotelAddress = data["hotelAddress"] as? String
-        let roomType = data["roomType"] as? String ?? "Unknown"
-
-        let price: Double
-        if let d = data["price"] as? Double { price = d }
-        else if let n = data["price"] as? NSNumber { price = n.doubleValue }
-        else if let i = data["price"] as? Int { price = Double(i) }
-        else { price = 0 }
-
-        let currency = data["currency"] as? String ?? "VND"
-
-        let checkIn: Date
-        if let ts = data["checkIn"] as? Timestamp { checkIn = ts.dateValue() }
-        else if let d = data["checkIn"] as? Date { checkIn = d }
-        else { checkIn = Date() }
-
-        let checkOut: Date
-        if let ts = data["checkOut"] as? Timestamp { checkOut = ts.dateValue() }
-        else if let d = data["checkOut"] as? Date { checkOut = d }
-        else { checkOut = Calendar.current.date(byAdding: .day, value: 1, to: checkIn) ?? Date() }
-
-        let createdAt: Date?
-        if let ts = data["createdAt"] as? Timestamp { createdAt = ts.dateValue() }
-        else if let d = data["createdAt"] as? Date { createdAt = d }
-        else { createdAt = nil }
-
-        let booking = DBBooking(
-            id: id,
-            userId: userId,
-            hotelId: hotelId,
-            hotelName: hotelName,
-            hotelAddress: hotelAddress,
-            roomType: roomType,
-            price: price,
-            currency: currency,
-            checkIn: checkIn,
-            checkOut: checkOut,
-            createdAt: createdAt
-        )
-        return booking
-    }
 }

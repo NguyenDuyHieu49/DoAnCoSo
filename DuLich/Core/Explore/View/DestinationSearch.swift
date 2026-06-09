@@ -68,14 +68,14 @@ struct DestinationSearch: View {
                         
                         Spacer()
                         
-                        Text("Tìm kiếm")
+                        Text("search")
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
                             .foregroundColor(Color(white: 0.15))
                         
                         Spacer()
                         
                         if !destination.isEmpty {
-                            Button("Xoá") {
+                            Button("clear") {
                                 destination = ""
                                 onSearch("")
                             }
@@ -103,7 +103,7 @@ struct DestinationSearch: View {
                                 ExtractedView(title: "loca_tion", description: destination.isEmpty ? "add_location" : LocalizedStringKey(destination))
                             } expandedContent: {
                                 VStack(alignment: .leading, spacing: 12) {
-                                    Text("Địa điểm cần tìm")
+                                    Text("destination_to_find")
                                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                                         .foregroundColor(Color(white: 0.10))
 
@@ -112,7 +112,7 @@ struct DestinationSearch: View {
                                             .font(.system(size: 14))
                                             .foregroundColor(Color(white: 0.45))
 
-                                        TextField("Tìm kiếm điểm đến…", text: $destination)
+                                        TextField("search_destination", text: $destination)
                                             .font(.system(size: 14, design: .rounded))
                                             .foregroundColor(Color(white: 0.12))
                                             .onSubmit {
@@ -238,7 +238,7 @@ struct DestinationSearch: View {
                                             Text("\(numPeople) adults")
                                                 .font(.system(size: 14, weight: .medium, design: .rounded))
                                                 .foregroundColor(Color(white: 0.15))
-                                            Text("Miễn phí cho trẻ em dưới 5 tuổi")
+                                            Text("free_for_kids")
                                                 .font(.system(size: 11, design: .rounded))
                                                 .foregroundColor(Color(white: 0.45))
                                         }
@@ -291,7 +291,7 @@ struct DestinationSearch: View {
                                 HStack(spacing: 8) {
                                     Image(systemName: "magnifyingglass")
                                         .font(.system(size: 15, weight: .semibold))
-                                    Text("Tìm kiếm")
+                                    Text("search")
                                         .font(.system(size: 15, weight: .semibold, design: .rounded))
                                 }
                                 .foregroundColor(.white)

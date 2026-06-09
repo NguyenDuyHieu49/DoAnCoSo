@@ -26,7 +26,7 @@ final class ReviewsManager {
             let data = doc.data()
             let id = doc.documentID
             let authorId = data["authorId"] as? String
-            let authorName = data["authorName"] as? String ?? "Khách"
+            let authorName = data["authorName"] as? String ?? String(localized: "guest")
             let rating = (data["rating"] as? Double) ?? (data["rating"] as? NSNumber)?.doubleValue ?? 0.0
             let comment = data["comment"] as? String ?? ""
             let likes = (data["likes"] as? Int) ?? (data["likes"] as? NSNumber)?.intValue ?? 0
@@ -55,6 +55,7 @@ final class ReviewsManager {
     }
 
     func submitReview(listingId: String, authorName: String, rating: Double, comment: String) async throws -> Review {
+        try ReviewContentModerator.shared.validate(comment)
         guard let uid = Auth.auth().currentUser?.uid else {
             throw NSError(domain: "ReviewsManager", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])
         }

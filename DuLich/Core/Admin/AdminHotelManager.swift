@@ -47,8 +47,29 @@ final class AdminHotelManager {
         try await batch.commit()
         print("[AdminHotelManager] createRooms success for hotelId:", hotelId)
     }
+    enum HotelDeletionError: LocalizedError {
+        case hasActiveBookings
+
+        var errorDescription: String? {
+            String(localized: "hotel_delete_blocked")
+        }
+    }
+
     func deleteHotel(id: String) async throws {
-        try await db.collection("hotels").document(id).delete()
+        let hasBookings = try await BookingManager.shared.hasActiveBookings(forHotelId: id)
+        guard !hasBookings else {
+            throw HotelDeletionError.hasActiveBookings
+        }
+
+        let roomsSnapshot = try await db.collection("rooms")
+            .whereField("hotelId", isEqualTo: id)
+            .getDocuments()
+        let batch = db.batch()
+        for doc in roomsSnapshot.documents {
+            batch.deleteDocument(doc.reference)
+        }
+        batch.deleteDocument(db.collection("hotels").document(id))
+        try await batch.commit()
         print("[AdminHotelManager] deleteHotel success, id:", id)
     }
 

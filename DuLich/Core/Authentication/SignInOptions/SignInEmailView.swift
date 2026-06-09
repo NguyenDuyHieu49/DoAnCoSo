@@ -53,12 +53,12 @@ struct SignInEmailView: View {
                             .padding(.bottom, 4)
                             .animation(.spring(response: 0.4), value: viewModel.isAdminMode)
  
-                        Text(viewModel.isAdminMode ? "Đăng nhập Admin" : "Welcome Back")
+                        Text(viewModel.isAdminMode ? String(localized: "admin_sign_in") : String(localized: "Welcome Back"))
                             .font(.system(size: 28, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
  
                         Text(viewModel.isAdminMode
-                             ? "Nhập thêm mật khẩu quản trị"
+                             ? String(localized: "admin_password_hint")
                              : "Sign in to continue")
                             .font(.system(size: 15, weight: .regular, design: .rounded))
                             .foregroundColor(.white.opacity(0.8))
@@ -90,13 +90,13 @@ struct SignInEmailView: View {
  
                         if viewModel.isAdminMode {
                             VStack(alignment: .leading, spacing: 6) {
-                                Label("Mật khẩu Admin", systemImage: "key.fill")
+                                Label("admin_password_label", systemImage: "key.fill")
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
                                     .foregroundColor(Color(red: 1.0, green: 0.8, blue: 0.3))
                                     .textCase(.uppercase)
                                     .tracking(0.8)
  
-                                SecureField("Nhập mật khẩu quản trị...", text: Binding(
+                                SecureField("admin_password_placeholder", text: Binding(
                                     get: { viewModel.adminPassword },
                                     set: { viewModel.adminPassword = $0 }
                                 ))
@@ -147,7 +147,7 @@ struct SignInEmailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text(viewModel.isAdminMode ? "Đăng nhập Admin" : "Sign In With Email")
+                Text(viewModel.isAdminMode ? String(localized: "admin_sign_in") : String(localized: "Sign In With Email"))
                     .font(.system(size: 17, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
             }
@@ -180,10 +180,10 @@ struct SignInEmailView: View {
                 }
  
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Đăng nhập với quyền Admin")
+                    Text("sign_in_with_admin")
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .foregroundColor(viewModel.isAdminMode ? Color(red: 0.9, green: 0.65, blue: 0.1) : .white)
-                    Text(viewModel.isAdminMode ? "Yêu cầu mật khẩu quản trị" : "Tick để truy cập tính năng admin")
+                    Text(viewModel.isAdminMode ? String(localized: "admin_password_required") : String(localized: "tick_admin_access"))
                         .font(.system(size: 11, weight: .regular, design: .rounded))
                         .foregroundColor(.white.opacity(0.55))
                 }
@@ -297,7 +297,7 @@ struct SignInEmailView: View {
                         Image(systemName: viewModel.isAdminMode ? "key.fill" : "arrow.right")
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.white.opacity(0.9))
-                        Text(viewModel.isAdminMode ? "Đăng nhập Admin" : "Sign In")
+                        Text(viewModel.isAdminMode ? String(localized: "admin_sign_in") : String(localized: "Sign In"))
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(.white)
                     }
@@ -307,7 +307,7 @@ struct SignInEmailView: View {
         .disabled(isLoading)
         .padding(.top, 4)
         .animation(.spring(response: 0.35), value: viewModel.isAdminMode)
-        .alert("Thông báo", isPresented: .init(
+        .alert("notification_title", isPresented: .init(
             get: { errorMessage != nil },
             set: { if !$0 { errorMessage = nil } }
         )) {

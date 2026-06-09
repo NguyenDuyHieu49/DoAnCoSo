@@ -13,7 +13,7 @@ struct SearchBar: View {
             Image(systemName: "magnifyingglass")
             
             VStack(alignment: .leading, spacing: 2){
-                Text("Hôm nay chúng ta đi đâu?")
+                Text("where_to_go_today")
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .foregroundStyle(.gray)

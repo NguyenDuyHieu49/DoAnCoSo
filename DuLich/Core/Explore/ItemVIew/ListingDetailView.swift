@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 extension Notification.Name {
     static let didCreateBooking = Notification.Name("didCreateBooking")
+    static let didUpdateBooking = Notification.Name("didUpdateBooking")
 }
 struct ListingDetailView: View {
     @Environment(\.dismiss) var dismiss
@@ -69,6 +70,19 @@ struct ListingDetailView: View {
             ReviewComposerView { authorName, rating, comment in
                 viewModel.submitReview(authorName: authorName, rating: rating, comment: comment)
                 isComposingReview = false
+            }
+        }
+        .sheet(isPresented: $viewModel.showPaymentSheet) {
+            if let room = viewModel.selectedRoom, let price = listing.pricePerNight?[room] {
+                let nights = max(1, Calendar.current.dateComponents([.day], from: viewModel.checkInDate, to: viewModel.checkOutDate).day ?? 1)
+                PaymentView(
+                    amount: Double(price * nights),
+                    currency: "VND",
+                    hotelName: listing.title,
+                    roomType: room
+                ) { method in
+                    Task { await viewModel.placeBooking(listing: listing, paymentMethod: method) }
+                }
             }
         }
         .alert("notifi_cation", isPresented: $viewModel.showAlert) {
@@ -143,7 +157,7 @@ struct ListingDetailView: View {
     }
     private func descriptionCard(_ text: String) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            SectionHeader(title: "Mô tả")
+            SectionHeader(title: String(localized: "description_label"))
             Text(text)
                 .font(.system(size: 14))
                 .foregroundStyle(Glass.textSecondary)
@@ -172,14 +186,14 @@ struct ListingDetailView: View {
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(Glass.textPrimary)
                     Text("·").foregroundStyle(Glass.textTertiary)
-                    Text(viewModel.reviews.isEmpty ? "Chưa có đánh giá" : "\(viewModel.reviews.count) đánh giá")
+                    Text(viewModel.reviews.isEmpty ? String(localized: "no_reviews_yet") : String(localized: "reviews_count \(viewModel.reviews.count)"))
                         .font(.system(size: 13))
                         .foregroundStyle(Glass.textSecondary)
                         .underline()
                 }
                 Spacer()
                 Button { withAnimation { viewModel.currentReviewIndex = 0 } } label: {
-                    Text("Xem đánh giá")
+                    Text("read_reviews")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(Glass.accent)
                         .padding(.horizontal, 10)
@@ -220,7 +234,7 @@ struct ListingDetailView: View {
             }
 
             Button { isComposingReview = true } label: {
-                Label("Đánh giá & Viết nhận xét", systemImage: "pencil.line")
+                Label("write_review_action", systemImage: "pencil.line")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
@@ -292,7 +306,7 @@ struct ListingDetailView: View {
     private var ownerCard: some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 3) {
-                Text("Chủ sở hữu")
+                Text("owner_label")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(Glass.textTertiary)
                     .textCase(.uppercase)
@@ -362,7 +376,7 @@ struct ListingDetailView: View {
                         Image(systemName: "text.alignleft")
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundStyle(Glass.accent)
-                        Text("Mô tả")
+                        Text("description_label")
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(Glass.textTertiary)
                             .textCase(.uppercase)
@@ -403,7 +417,7 @@ struct ListingDetailView: View {
                                     .foregroundStyle(isSelected ? Glass.textPrimary : Glass.textSecondary)
                                     .multilineTextAlignment(.center)
                                     .lineLimit(2)
-                                Text("\(Int(price)) VNĐ")
+                                Text("vnd_price \(Int(price))")
                                     .font(.system(size: 10))
                                     .foregroundStyle(isSelected ? Glass.accent : Glass.textTertiary)
                             }
@@ -534,7 +548,7 @@ struct ListingDetailView: View {
             HStack(spacing: 14) {
                 VStack(alignment: .leading, spacing: 2) {
                     if let room = viewModel.selectedRoom, let price = listing.pricePerNight?[room] {
-                        Text("\(Int(price)) VNĐ")
+                        Text("vnd_price \(Int(price))")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
                             .foregroundStyle(Glass.textPrimary)
                         Text("per night")
@@ -544,7 +558,7 @@ struct ListingDetailView: View {
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(Glass.pink)
                     } else {
-                        Text("Chưa chọn phòng")
+                        Text("no_room_selected")
                             .font(.system(size: 13))
                             .foregroundStyle(Glass.textTertiary)
                     }
@@ -554,12 +568,12 @@ struct ListingDetailView: View {
                     EmptyView()
                 }
 
-                Button { Task { await viewModel.placeBooking(listing: listing) } } label: {
+                Button { viewModel.preparePayment(listing: listing) } label: {
                     HStack(spacing: 6) {
                         if viewModel.isProcessing {
                             ProgressView().tint(.white).scaleEffect(0.82)
                         }
-                        Text(viewModel.isProcessing ? "Đang xử lý..." : "Thanh toán")
+                        Text(viewModel.isProcessing ? String(localized: "processing") : String(localized: "pay_now"))
                             .font(.system(size: 15, weight: .semibold))
                     }
                     .foregroundStyle(.white)

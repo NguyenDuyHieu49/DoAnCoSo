@@ -18,6 +18,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             print("AppDelegate: Firebase handled URL:", url.absoluteString)
             return true
         }
+        if url.scheme == PaymentConfig.returnScheme {
+            Task { @MainActor in
+                if PaymentCheckoutCoordinator.shared.handleReturnURL(url) {
+                    print("AppDelegate: Payment handled URL:", url.absoluteString)
+                }
+            }
+            return true
+        }
         return false
     }
 }

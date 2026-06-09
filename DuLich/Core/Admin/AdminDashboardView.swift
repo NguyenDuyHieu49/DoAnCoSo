@@ -12,6 +12,9 @@ struct AdminDashboardView: View {
     @State private var showAddHotel = false
     @State private var hotels: [HotelForm] = []
     @State private var isLoading = false
+    @State private var hotelToDelete: HotelForm?
+    @State private var deleteErrorMessage: String?
+    @State private var showDeleteError = false
 
     var body: some View {
         ZStack {
@@ -28,17 +31,16 @@ struct AdminDashboardView: View {
             ScrollView {
                 VStack(spacing: 20) {
 
-                    // Header card
                     HStack(spacing: 14) {
                         Image(systemName: "shield.checkered")
                             .font(.system(size: 32, weight: .medium))
                             .foregroundColor(Color(red: 0.2, green: 0.45, blue: 0.95))
 
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Xin chào, Admin")
+                            Text("hello_admin")
                                 .font(.system(size: 18, weight: .bold, design: .rounded))
                                 .foregroundColor(Color(white: 0.1))
-                            Text("\(hotels.count) khách sạn trong hệ thống")
+                            Text("hotels_in_system \(hotels.count)")
                                 .font(.system(size: 13, design: .rounded))
                                 .foregroundColor(Color(white: 0.45))
                         }
@@ -61,7 +63,7 @@ struct AdminDashboardView: View {
                         HStack(spacing: 10) {
                             Image(systemName: "plus.circle.fill")
                                 .font(.system(size: 20, weight: .semibold))
-                            Text("Thêm khách sạn mới")
+                            Text("add_new_hotel")
                                 .font(.system(size: 16, weight: .bold, design: .rounded))
                         }
                         .foregroundColor(.white)
@@ -87,7 +89,7 @@ struct AdminDashboardView: View {
                             Image(systemName: "building.2")
                                 .font(.system(size: 44))
                                 .foregroundColor(Color(white: 0.6))
-                            Text("Chưa có khách sạn nào")
+                            Text("no_hotels")
                                 .font(.system(size: 15, design: .rounded))
                                 .foregroundColor(Color(white: 0.5))
                         }
@@ -105,7 +107,7 @@ struct AdminDashboardView: View {
                 .padding(16)
             }
         }
-        .navigationTitle("Quản trị")
+        .navigationTitle("admin_title")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(isPresented: $showAddHotel) {
@@ -115,6 +117,25 @@ struct AdminDashboardView: View {
         }
         .task {
             await loadHotels()
+        }
+        .alert("delete_hotel_title", isPresented: .init(
+            get: { hotelToDelete != nil },
+            set: { if !$0 { hotelToDelete = nil } }
+        )) {
+            Button("delete_btn", role: .destructive) {
+                guard let hotel = hotelToDelete else { return }
+                Task { await deleteHotel(hotel) }
+            }
+            Button("can_cel", role: .cancel) { hotelToDelete = nil }
+        } message: {
+            if let hotel = hotelToDelete {
+                Text("delete_hotel_message \(hotel.title)")
+            }
+        }
+        .alert("cannot_delete", isPresented: $showDeleteError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(deleteErrorMessage ?? String(localized: "delete_hotel_error_default"))
         }
     }
 
@@ -133,19 +154,15 @@ struct AdminDashboardView: View {
                 Text(hotel.title)
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundColor(Color(white: 0.1))
-                Text(hotel.city.isEmpty ? "Chưa có địa chỉ" : hotel.city)
+                Text(hotel.city.isEmpty ? String(localized: "no_address") : hotel.city)
                     .font(.system(size: 12, design: .rounded))
                     .foregroundColor(Color(white: 0.5))
             }
 
             Spacer()
 
-            // Xoá
             Button {
-                Task {
-                    try? await AdminHotelManager.shared.deleteHotel(id: hotel.id)
-                    await loadHotels()
-                }
+                hotelToDelete = hotel
             } label: {
                 Image(systemName: "trash")
                     .font(.system(size: 15))
@@ -173,6 +190,18 @@ struct AdminDashboardView: View {
         isLoading = true
         hotels = (try? await AdminHotelManager.shared.fetchHotels()) ?? []
         isLoading = false
+    }
+
+    private func deleteHotel(_ hotel: HotelForm) async {
+        do {
+            try await AdminHotelManager.shared.deleteHotel(id: hotel.id)
+            hotelToDelete = nil
+            await loadHotels()
+        } catch {
+            hotelToDelete = nil
+            deleteErrorMessage = error.localizedDescription
+            showDeleteError = true
+        }
     }
 }
 

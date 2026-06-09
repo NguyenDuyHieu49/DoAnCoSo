@@ -50,7 +50,7 @@ struct ProfileView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("Hồ sơ")
+                    Text("profile_title")
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                 }
@@ -67,7 +67,7 @@ struct ProfileView: View {
                     SignInEmailView(showSignInView: $showSignIn)
                 }
             }
-            .alert("Lỗi", isPresented: $showErrorAlert) {
+            .alert("error_title", isPresented: $showErrorAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(vm.errorMessage ?? "")
@@ -85,7 +85,7 @@ struct ProfileView: View {
                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     .scaleEffect(1.3)
             }
-            Text("Đang tải...")
+            Text("loading")
                 .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundColor(.white.opacity(0.85))
         }
@@ -103,7 +103,7 @@ struct ProfileView: View {
                     .foregroundColor(.white)
             }
             VStack(spacing: 8) {
-                Text("Đã xảy ra lỗi")
+                Text("error_occurred")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                 Text(message)
@@ -111,7 +111,7 @@ struct ProfileView: View {
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
             }
-            glassButton(title: "Thử lại", icon: "arrow.clockwise") {
+            glassButton(title: String(localized: "retry"), icon: "arrow.clockwise") {
                 Task { await vm.loadCurrentUser() }
             }
         }
@@ -130,15 +130,15 @@ struct ProfileView: View {
                     .foregroundColor(.white)
             }
             VStack(spacing: 8) {
-                Text("Chưa đăng nhập")
+                Text("not_signed_in")
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
-                Text("Đăng nhập để xem thông tin hồ sơ của bạn.")
+                Text("sign_in_to_view_profile")
                     .font(.system(size: 14, design: .rounded))
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
             }
-            glassButton(title: "Đăng nhập", icon: "arrow.right.circle") {
+            glassButton(title: String(localized: "sign_in"), icon: "arrow.right.circle") {
                 showSignIn = true
             }
         }
@@ -214,7 +214,7 @@ struct ProfileView: View {
                         Image(systemName: "envelope.fill")
                             .font(.system(size: 11))
                             .foregroundColor(Color(red: 0.2, green: 0.45, blue: 0.95).opacity(0.7))
-                        Text(user.email ?? "Chưa có email")
+                        Text(user.email ?? String(localized: "no_email"))
                             .font(.system(size: 13, design: .rounded))
                             .foregroundColor(Color(red: 0.3, green: 0.3, blue: 0.5).opacity(0.85))
                             .lineLimit(1)
@@ -248,7 +248,7 @@ struct ProfileView: View {
                         Image(systemName: "text.quote")
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundColor(Color(red: 0.2, green: 0.45, blue: 0.95).opacity(0.7))
-                        Text("Giới thiệu")
+                        Text("about")
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
                             .foregroundColor(Color(red: 0.3, green: 0.3, blue: 0.5).opacity(0.8))
                             .textCase(.uppercase)
@@ -323,7 +323,7 @@ struct ProfileView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "pencil")
                             .font(.system(size: 15, weight: .semibold))
-                        Text("Chỉnh sửa hồ sơ")
+                        Text("edit_profile")
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
                     }
                     .foregroundColor(.white)

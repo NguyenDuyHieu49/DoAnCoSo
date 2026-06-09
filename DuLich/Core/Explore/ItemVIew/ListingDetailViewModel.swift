@@ -28,6 +28,7 @@ final class ListingDetailViewModel: ObservableObject {
     @Published var navigateToHistory: Bool = false
     @Published var currentReviewIndex: Int = 0
     @Published var selectedRoomNumber: String? = nil
+    @Published var showPaymentSheet: Bool = false
 
 
     func toggleLike(reviewId: String) {
@@ -49,10 +50,18 @@ final class ListingDetailViewModel: ObservableObject {
     }
 
     func submitReview(authorName: String, rating: Double, comment: String) {
+        do {
+            try ReviewContentModerator.shared.validate(comment)
+        } catch {
+            alertMessage = error.localizedDescription
+            showAlert = true
+            return
+        }
+
         let review = Review(
             id: UUID().uuidString,
             authorId: nil,
-            authorName: authorName.isEmpty ? "Khách" : authorName,
+            authorName: authorName.isEmpty ? String(localized: "guest") : authorName,
             rating: rating,
             comment: comment,
             createdAt: Date(),
@@ -63,7 +72,26 @@ final class ListingDetailViewModel: ObservableObject {
         currentReviewIndex = 0
     }
 
-    func placeBooking(listing: Listing) async {
+    func preparePayment(listing: Listing) {
+        guard let selectedRoom, listing.pricePerNight?[selectedRoom] != nil else {
+            alertMessage = "choose_room_to_book."
+            showAlert = true
+            return
+        }
+        guard checkOutDate > checkInDate else {
+            alertMessage = "out_after_in"
+            showAlert = true
+            return
+        }
+        guard Auth.auth().currentUser?.uid != nil else {
+            alertMessage = "signin_book."
+            showAlert = true
+            return
+        }
+        showPaymentSheet = true
+    }
+
+    func placeBooking(listing: Listing, paymentMethod: PaymentMethod) async {
         guard !isProcessing else { return }
         isProcessing = true
 
@@ -87,6 +115,17 @@ final class ListingDetailViewModel: ObservableObject {
         }
 
         do {
+            let nights = max(1, Calendar.current.dateComponents([.day], from: checkInDate, to: checkOutDate).day ?? 1)
+            let totalAmount = Double(price * nights)
+            let orderInfo = "\(listing.title) - \(selectedRoom)"
+
+            let transactionId = try await PaymentService.shared.processPayment(
+                method: paymentMethod,
+                amount: totalAmount,
+                currency: "VND",
+                orderInfo: orderInfo
+            )
+
             let db = Firestore.firestore()
             let bookingRef = db.collection("bookings").document()
             let bookingData: [String: Any] = [
@@ -95,13 +134,17 @@ final class ListingDetailViewModel: ObservableObject {
                 "hotelName": listing.title,
                 "hotelAddress": listing.address,
                 "roomType": selectedRoom,
-                "roomNumber": selectedRoomNumber ?? "",  
+                "roomNumber": selectedRoomNumber ?? "",
                 "price": price,
+                "totalAmount": totalAmount,
                 "currency": "VND",
                 "checkIn": Timestamp(date: checkInDate),
                 "checkOut": Timestamp(date: checkOutDate),
                 "createdAt": Timestamp(date: Date()),
-                "status": "active"
+                "status": "active",
+                "paymentMethod": paymentMethod.rawValue,
+                "paymentStatus": PaymentStatus.completed.rawValue,
+                "paymentTransactionId": transactionId
             ]
             try await bookingRef.setData(bookingData)
             NotificationCenter.default.post(name: .didCreateBooking, object: nil, userInfo: [
@@ -115,7 +158,7 @@ final class ListingDetailViewModel: ObservableObject {
             isProcessing = false
             navigateToHistory = true
         } catch {
-            alertMessage = "booking_failed."
+            alertMessage = error.localizedDescription.isEmpty ? "booking_failed." : error.localizedDescription
             showAlert = true
             isProcessing = false
         }

@@ -66,12 +66,12 @@ struct AuthenticationView: View {
                         }
                         .padding(.bottom, 4)
 
-                        Text("Chào mừng")
+                        Text("welcome_back")
                             .font(.system(size: 30, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                             .shadow(color: Color.blue.opacity(0.25), radius: 4, x: 0, y: 2)
 
-                        Text("Chọn phương thức đăng nhập")
+                        Text("choose_sign_in_method")
                             .font(.system(size: 15, weight: .regular, design: .rounded))
                             .foregroundColor(.white.opacity(0.8))
                     }
@@ -106,7 +106,7 @@ struct AuthenticationView: View {
                             Rectangle()
                                 .fill(Color.white.opacity(0.4))
                                 .frame(height: 1)
-                            Text("hoặc")
+                            Text("or_divider")
                                 .font(.system(size: 12, weight: .medium, design: .rounded))
                                 .foregroundColor(.white.opacity(0.65))
                                 .fixedSize()
@@ -184,7 +184,7 @@ struct AuthenticationView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Đăng nhập")
+                Text("sign_in")
                     .font(.system(size: 17, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
             }

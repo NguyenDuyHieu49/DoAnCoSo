@@ -122,7 +122,7 @@ struct WelcomeView: View {
                         } label: {
                             HStack {
                                 Spacer()
-                                Text(selection == pages.count - 1 ? "Bắt đầu khám phá" : "Tiếp tục")
+                                Text(selection == pages.count - 1 ? String(localized: "start_exploring") : String(localized: "continue_btn"))
                                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                                 if selection == pages.count - 1 {
                                     Image(systemName: "arrow.right")
@@ -150,7 +150,7 @@ struct WelcomeView: View {
                                 HStack(spacing: 6) {
                                     Image(systemName: "person.crop.circle")
                                         .font(.system(size: 14, weight: .medium))
-                                    Text("Đăng nhập")
+                                    Text("sign_in")
                                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                                 }
                                 .foregroundColor(Color(.label))
@@ -182,7 +182,7 @@ struct WelcomeView: View {
                                 HStack(spacing: 6) {
                                     Image(systemName: "person.fill.questionmark")
                                         .font(.system(size: 14, weight: .medium))
-                                    Text("Dùng thử")
+                                    Text("try_guest")
                                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                                 }
                                 .foregroundColor(Color(.secondaryLabel).opacity(0.80))

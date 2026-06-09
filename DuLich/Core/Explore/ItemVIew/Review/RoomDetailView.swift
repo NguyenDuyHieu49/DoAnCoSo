@@ -62,7 +62,7 @@ struct RoomDetailView: View {
                             Text("\(Int(price))")
                                 .font(.system(size: 26, weight: .bold))
                                 .foregroundStyle(Glass.accent)
-                            Text("VNĐ / đêm")
+                            Text("room_per_night")
                                 .font(.system(size: 13))
                                 .foregroundStyle(Glass.textSecondary)
                         }
@@ -71,11 +71,11 @@ struct RoomDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 8) {
                             Image(systemName: "text.alignleft").foregroundStyle(Glass.accent)
-                            Text("Mô tả phòng")
+                            Text("room_description_title")
                                 .font(.system(size: 15, weight: .bold, design: .rounded))
                                 .foregroundStyle(Glass.textPrimary)
                         }
-                        Text("Phòng khách sạn được thiết kế theo phong cách hiện đại và sang trọng, mang lại cảm giác ấm cúng nhưng vẫn đầy đủ tiện nghi. Không gian phòng rộng rãi với giường lớn êm ái, chăn ga sạch sẽ và ánh đèn vàng dịu nhẹ tạo cảm giác thư giãn cho khách lưu trú. Cửa sổ lớn giúp đón ánh sáng tự nhiên và mở ra khung cảnh đẹp của thành phố. Trong phòng được trang bị đầy đủ các tiện ích như điều hòa, tivi màn hình phẳng, wifi tốc độ cao, minibar và bàn làm việc.")
+                        Text("room_description_body")
                             .font(.system(size: 14))
                             .foregroundStyle(Glass.textSecondary)
                             .lineSpacing(5)
@@ -87,7 +87,7 @@ struct RoomDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 8) {
                             Image(systemName: "list.number").foregroundStyle(Glass.accent)
-                            Text("Chọn số phòng")
+                            Text("select_room_number")
                                 .font(.system(size: 15, weight: .bold, design: .rounded))
                                 .foregroundStyle(Glass.textPrimary)
                         }
@@ -97,7 +97,7 @@ struct RoomDetailView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding()
                         } else if rooms.isEmpty {
-                            Text("Không có phòng nào khả dụng")
+                            Text("no_rooms_available")
                                 .font(.system(size: 14))
                                 .foregroundStyle(Glass.textSecondary)
                                 .frame(maxWidth: .infinity, alignment: .center)
@@ -123,7 +123,7 @@ struct RoomDetailView: View {
                             dismiss()
                         }
                     } label: {
-                        Text("Xác nhận")
+                        Text("confirm")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
@@ -171,7 +171,7 @@ struct RoomDetailView: View {
                         isSelected ? Glass.accent : Glass.textPrimary
                     )
                 if room.isBooked {
-                    Text("Đã đặt")
+                    Text("room_booked")
                         .font(.system(size: 9))
                         .foregroundStyle(Glass.textTertiary)
                 }

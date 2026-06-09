@@ -67,7 +67,7 @@ struct ExploreView: View {
                 .toolbar {
 
                     ToolbarItem(placement: .principal) {
-                        Text("Khám phá")
+                        Text("explore_title")
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(Color(white: 0.10))
                     }
@@ -161,7 +161,7 @@ extension ExploreView {
         
         HStack {
             
-            Text("Gợi ý cho bạn")
+            Text("suggestions_for_you")
                 .font(.system(size: 17, weight: .semibold, design: .rounded))
                 .foregroundColor(Color(white: 0.12))
                 .frame(alignment: .leading)
@@ -362,7 +362,7 @@ private struct GlassSearchBar: View {
                 .font(.system(size: 15, weight: .medium))
                 .foregroundColor(Color(white: 0.40))
 
-            Text("Tìm kiếm điểm đến…")
+            Text("search_destination")
                 .font(.system(size: 14, design: .rounded))
                 .foregroundColor(Color(white: 0.50))
 
@@ -373,7 +373,7 @@ private struct GlassSearchBar: View {
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 12, weight: .medium))
 
-                Text("Lọc")
+                Text("filter")
                     .font(.system(size: 12, weight: .medium, design: .rounded))
             }
             .foregroundColor(Color(red: 0.15, green: 0.45, blue: 0.90))

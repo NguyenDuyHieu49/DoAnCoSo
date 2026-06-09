@@ -12,7 +12,7 @@ import Combine
 @MainActor
 class WeatherViewModel: ObservableObject {
     @Published var temperature: String = "--"
-    @Published var description: String = "Đang tải..."
+    @Published var description: String = String(localized: "loading")
     @Published var humidity: Int = 0
     @Published var windSpeed: Double = 0
     @Published var clouds: Int = 0
@@ -28,7 +28,7 @@ class WeatherViewModel: ObservableObject {
         https://api.openweathermap.org/data/2.5/weather?q=\(cityEscaped),VN&appid=\(apiKey)&units=metric&lang=\(currentLang)
         """
         guard let url = URL(string: urlString) else {
-            self.description = "URL không hợp lệ"
+            self.description = String(localized: "invalid_url")
             return
         }
         
@@ -39,7 +39,7 @@ class WeatherViewModel: ObservableObject {
             
             self.cityName = result.name
             self.temperature = "\(Int(result.main.temp))°C"
-            self.description = result.weather.first?.description.capitalized ?? "Không rõ"
+            self.description = result.weather.first?.description.capitalized ?? String(localized: "unknown_weather")
             self.humidity = result.main.humidity
             self.windSpeed = result.wind.speed
             self.clouds = result.clouds.all
@@ -69,7 +69,7 @@ class WeatherViewModel: ObservableObject {
             }
         } catch {
             print("Weather fetch error:", error)
-            self.description = "Lỗi tải dữ liệu"
+            self.description = String(localized: "weather_load_error")
             self.weatherMain = "Unknown"
         }
     }

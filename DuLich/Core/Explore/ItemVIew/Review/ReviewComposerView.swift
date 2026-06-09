@@ -2,8 +2,6 @@
 //  ReviewComposer.swift
 //  Hotelia
 //
-//  Created by Macbook Pro on 14/5/26.
-//
 
 import SwiftUI
 import FirebaseAuth
@@ -13,6 +11,8 @@ struct ReviewComposerView: View {
     @State private var authorName: String = Auth.auth().currentUser?.displayName ?? ""
     @State private var rating: Int = 5
     @State private var comment: String = ""
+    @State private var moderationError: String?
+    @State private var showModerationAlert = false
     var onSubmit: (String, Double, String) -> Void
 
     var body: some View {
@@ -41,7 +41,7 @@ struct ReviewComposerView: View {
                         .frame(width: 36, height: 4)
                         .padding(.top, 12)
 
-                    Text("Viết đánh giá")
+                    Text("write_review")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(Glass.textPrimary)
 
@@ -104,7 +104,7 @@ struct ReviewComposerView: View {
 
                     HStack(spacing: 12) {
                         Button { dismiss() } label: {
-                            Text("Hủy")
+                            Text("can_cel")
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundStyle(Glass.textSecondary)
                                 .frame(maxWidth: .infinity)
@@ -117,11 +117,8 @@ struct ReviewComposerView: View {
                                 )
                         }
 
-                        Button {
-                            onSubmit(authorName.isEmpty ? "Khách" : authorName, Double(rating), comment)
-                            dismiss()
-                        } label: {
-                            Text("Gửi")
+                        Button { submitReview() } label: {
+                            Text("send_review")
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
@@ -145,5 +142,22 @@ struct ReviewComposerView: View {
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.hidden)
+        .alert("review_moderation_alert_title", isPresented: $showModerationAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(moderationError ?? "")
+        }
+    }
+
+    private func submitReview() {
+        do {
+            try ReviewContentModerator.shared.validate(comment)
+            let name = authorName.isEmpty ? String(localized: "guest") : authorName
+            onSubmit(name, Double(rating), comment.trimmingCharacters(in: .whitespacesAndNewlines))
+            dismiss()
+        } catch {
+            moderationError = error.localizedDescription
+            showModerationAlert = true
+        }
     }
 }

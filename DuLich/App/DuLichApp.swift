@@ -18,14 +18,21 @@ struct DuLichApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if hasSeenWelcome {
-                RootView().environmentObject(authState)
-            } else {
-                WelcomeView {
-                    hasSeenWelcome = true
-                    UserDefaults.standard.set(true, forKey: "hasSeenWelcome")
+            Group {
+                if hasSeenWelcome {
+                    RootView().environmentObject(authState)
+                } else {
+                    WelcomeView {
+                        hasSeenWelcome = true
+                        UserDefaults.standard.set(true, forKey: "hasSeenWelcome")
+                    }
+                    .environmentObject(authState)
                 }
-                .environmentObject(authState)
+            }
+            .onOpenURL { url in
+                Task { @MainActor in
+                    _ = PaymentCheckoutCoordinator.shared.handleReturnURL(url)
+                }
             }
         }
     }

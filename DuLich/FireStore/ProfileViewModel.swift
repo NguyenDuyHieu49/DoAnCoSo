@@ -13,7 +13,7 @@ final class ProfileViewModel: ObservableObject {
             isLoading = true
             errorMessage = nil
             guard let uid = Auth.auth().currentUser?.uid else {
-                errorMessage = "Chưa đăng nhập"
+                errorMessage = String(localized: "not_signed_in")
                 user = nil
                 isLoading = false
                 return

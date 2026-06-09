@@ -55,7 +55,7 @@ struct AddHotelView: View {
                             Button {
                                 withAnimation { form.priceEntries.append(PriceEntry()) }
                             } label: {
-                                Label("Thêm loại phòng", systemImage: "plus.circle.fill")
+                                Label("add_room_type", systemImage: "plus.circle.fill")
                                     .font(.system(size: 14, weight: .semibold, design: .rounded))
                                     .foregroundColor(Color(red: 0.2, green: 0.45, blue: 0.95))
                                     .frame(maxWidth: .infinity)
@@ -108,23 +108,23 @@ struct AddHotelView: View {
                     .padding(.horizontal, 16)
                 }
             }
-            .navigationTitle("Thêm khách sạn")
+            .navigationTitle("add_hotel_title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Huỷ") { dismiss() }
+                    Button("can_cel") { dismiss() }
                         .font(.system(size: 16, weight: .medium, design: .rounded))
                         .foregroundColor(.white)
                 }
             }
             .toolbarColorScheme(.dark, for: .navigationBar)
-            .alert("Thêm thành công!", isPresented: $saveSuccess) {
+            .alert("add_hotel_success", isPresented: $saveSuccess) {
                 Button("OK") {
                     onSaved?()
                     dismiss()
                 }
             } message: {
-                Text("Khách sạn \"\(form.title)\" đã được thêm vào hệ thống.")
+                Text("add_hotel_success_message \(form.title)")
             }
         }
     }
@@ -141,7 +141,7 @@ struct AddHotelView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "photo.on.rectangle")
                             .font(.system(size: 16))
-                        Text("Thư viện")
+                        Text("photo_library")
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
                     }
                     .foregroundColor(Color(red: 0.2, green: 0.45, blue: 0.95))
@@ -218,7 +218,7 @@ struct AddHotelView: View {
                 }
             }
 
-            Text("\(form.selectedImages.count)/6 ảnh đã chọn")
+            Text("photos_selected \(form.selectedImages.count)")
                 .font(.system(size: 12, design: .rounded))
                 .foregroundColor(Color(white: 0.5))
         }
@@ -313,13 +313,13 @@ struct AddHotelView: View {
     private func priceEntryRow(entry: Binding<PriceEntry>) -> some View {
         VStack(spacing: 8) {
             HStack(spacing: 8) {
-                TextField("Loại phòng", text: entry.roomType)
+                TextField("room_type_field", text: entry.roomType)
                     .font(.system(size: 14, design: .rounded))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 12)
                     .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.75)))
 
-                TextField("Giá (VND)", text: entry.price)
+                TextField("price_vnd_field", text: entry.price)
                     .font(.system(size: 14, design: .rounded))
                     .keyboardType(.numberPad)
                     .padding(.horizontal, 12)
@@ -367,7 +367,7 @@ struct AddHotelView: View {
                     saveSuccess = true
                 } catch {
                     isSaving = false
-                    saveError = "Lỗi: \(error.localizedDescription)"
+                    saveError = String(localized: "save_error_prefix \(error.localizedDescription)")
                 }
             }
         } label: {
@@ -387,7 +387,7 @@ struct AddHotelView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 18, weight: .semibold))
-                        Text("Thêm khách sạn")
+                        Text("add_hotel_btn")
                             .font(.system(size: 17, weight: .bold, design: .rounded))
                     }
                     .foregroundColor(.white)
@@ -473,19 +473,19 @@ struct AddHotelView: View {
 
     private func validate() -> Bool {
         if form.title.isEmpty {
-            saveError = "Vui lòng nhập tên khách sạn"
+            saveError = String(localized: "validation_hotel_name")
             return false
         }
         if form.city.isEmpty {
-            saveError = "Vui lòng nhập thành phố"
+            saveError = String(localized: "validation_city")
             return false
         }
         if form.priceEntries.filter({ !$0.roomType.isEmpty }).isEmpty {
-            saveError = "Vui lòng thêm ít nhất một loại phòng"
+            saveError = String(localized: "validation_room_type")
             return false
         }
         if form.selectedImages.isEmpty {
-            saveError = "Vui lòng chọn ít nhất 1 ảnh"
+            saveError = String(localized: "validation_photos")
             return false
         }
         return true
@@ -510,9 +510,9 @@ extension ListingFeatures: CaseIterable {
     var displayTitle: String {
         switch self {
         case .selfCheckIn:
-            return "Check-in tự động với 1 lần chạm"
+            return String(localized: "feature_auto_checkin")
         case .superHost:
-            return "Khách sạn đạt chuẩn quốc tế"
+            return String(localized: "feature_intl_standard")
         }
     }
 }

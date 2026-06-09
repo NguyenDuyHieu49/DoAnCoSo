@@ -15,7 +15,7 @@ struct CloudinaryService {
     static func uploadImage(_ image: UIImage) async throws -> String {
         guard let data = image.jpegData(compressionQuality: 0.8) else {
             throw NSError(domain: "Cloudinary", code: -1,
-                         userInfo: [NSLocalizedDescriptionKey: "Không convert được ảnh"])
+                         userInfo: [NSLocalizedDescriptionKey: String(localized: "image_convert_failed")])
         }
         
         let url = URL(string: "https://api.cloudinary.com/v1_1/\(cloudName)/image/upload")!
@@ -47,7 +47,7 @@ struct CloudinaryService {
               let secureUrl = json["secure_url"] as? String else {
             let raw = String(data: responseData, encoding: .utf8) ?? "unknown"
             throw NSError(domain: "Cloudinary", code: -2,
-                         userInfo: [NSLocalizedDescriptionKey: "Upload thất bại: \(raw)"])
+                         userInfo: [NSLocalizedDescriptionKey: String(localized: "upload_failed \(raw)")])
         }
         
         print("[Cloudinary] Upload OK:", secureUrl)

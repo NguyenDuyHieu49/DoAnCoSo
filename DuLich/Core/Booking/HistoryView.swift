@@ -47,7 +47,7 @@ struct HistoryView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("Lịch sử đặt phòng")
+                    Text("booking_history_title")
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                 }
@@ -57,6 +57,9 @@ struct HistoryView: View {
                 Task { await vm.load() }
             }
             .onReceive(NotificationCenter.default.publisher(for: .didCreateBooking)) { _ in
+                Task { await vm.load() }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .didUpdateBooking)) { _ in
                 Task { await vm.load() }
             }
         }
@@ -72,7 +75,7 @@ struct HistoryView: View {
                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     .scaleEffect(1.3)
             }
-            Text("Đang tải...")
+            Text("loading")
                 .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundColor(.white.opacity(0.85))
         }
@@ -90,7 +93,7 @@ struct HistoryView: View {
                     .foregroundColor(.white)
             }
             VStack(spacing: 8) {
-                Text("Đã xảy ra lỗi")
+                Text("error_occurred")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                 Text(message)
@@ -98,7 +101,7 @@ struct HistoryView: View {
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
             }
-            glassButton(title: "Thử lại", icon: "arrow.clockwise") {
+            glassButton(title: String(localized: "retry"), icon: "arrow.clockwise") {
                 Task { await vm.load() }
             }
         }
@@ -117,10 +120,10 @@ struct HistoryView: View {
                     .foregroundColor(.white)
             }
             VStack(spacing: 8) {
-                Text("Chưa có lịch sử")
+                Text("no_history")
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
-                Text("Bạn chưa đặt phòng nào.\nHãy bắt đầu khám phá!")
+                Text("no_history_subtitle")
                     .font(.system(size: 14, design: .rounded))
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
@@ -252,6 +255,8 @@ struct BookingRowCard: View {
                             .font(.system(size: 12, design: .rounded))
                             .foregroundColor(Color(red: 0.3, green: 0.3, blue: 0.5).opacity(0.7))
                     }
+
+                    statusBadge
                 }
 
                 Spacer()
@@ -274,5 +279,45 @@ struct BookingRowCard: View {
             .padding(.vertical, 14)
         }
         .shadow(color: Color(red: 0.2, green: 0.4, blue: 0.8).opacity(0.12), radius: 12, x: 0, y: 6)
+    }
+
+    @ViewBuilder
+    private var statusBadge: some View {
+        let needsCheckIn = booking.status == .active
+            && BookingManager.isCheckInDay(checkIn: booking.checkIn)
+
+        if needsCheckIn {
+            Text("need_arrival_confirmation")
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .foregroundColor(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.orange)
+                .clipShape(Capsule())
+        } else {
+            Text(booking.status.displayName)
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .foregroundColor(statusTextColor)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(statusBackgroundColor)
+                .clipShape(Capsule())
+        }
+    }
+
+    private var statusTextColor: Color {
+        switch booking.status {
+        case .active: return Color(red: 0.2, green: 0.45, blue: 0.95)
+        case .checkedIn: return Color(red: 0.1, green: 0.55, blue: 0.3)
+        case .cancelled: return Color(red: 0.8, green: 0.2, blue: 0.2)
+        }
+    }
+
+    private var statusBackgroundColor: Color {
+        switch booking.status {
+        case .active: return Color(red: 0.2, green: 0.45, blue: 0.95).opacity(0.12)
+        case .checkedIn: return Color(red: 0.1, green: 0.55, blue: 0.3).opacity(0.12)
+        case .cancelled: return Color(red: 0.8, green: 0.2, blue: 0.2).opacity(0.12)
+        }
     }
 }

@@ -14,6 +14,20 @@
 				<string>com.googleusercontent.apps.170450615011-834qjphaod1cgeitsic6k6jqvdn1gh87</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Hotelia Payment</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>hotelia</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>momo</string>
 	</array>
 	<key>GIDClientID</key>
 	<string>170450615011-834qjphaod1cgeitsic6k6jqvdn1gh87.apps.googleusercontent.com</string>

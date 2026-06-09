@@ -206,8 +206,8 @@ struct WeatherCard: View {
         switch viewModel.weatherMain {
         case "Clouds":
             return isPartlyCloudy
-                ? "Nắng có mây (\(viewModel.clouds)%)"
-                : "Nhiều mây, dễ mưa (\(viewModel.clouds)%)"
+                ? String(localized: "cloudy_sunny_format \(viewModel.clouds)")
+                : String(localized: "cloudy_rain_format \(viewModel.clouds)")
         default:
             return viewModel.description.capitalized
         }

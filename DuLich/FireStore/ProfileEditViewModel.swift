@@ -26,7 +26,7 @@ final class ProfileEditViewModel: ObservableObject {
     func buildUpdatedUser(from user: DBUser?) -> DBUser? {
         guard let user = user else { return nil }
         if !isValidEmail(email) {
-            errorMessage = "Email không hợp lệ"
+            errorMessage = String(localized: "invalid_email")
             return nil
         }
         errorMessage = nil
@@ -46,7 +46,7 @@ final class ProfileEditViewModel: ObservableObject {
 
     func save(user: DBUser?) async throws -> DBUser? {
         guard let updated = buildUpdatedUser(from: user) else {
-            if errorMessage == nil { errorMessage = "Không thể lưu" }
+            if errorMessage == nil { errorMessage = String(localized: "cannot_save") }
             return nil
         }
         isSaving = true
