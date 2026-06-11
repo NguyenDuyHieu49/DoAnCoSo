@@ -21,7 +21,11 @@ class WeatherViewModel: ObservableObject {
     @Published var weatherMain: String = "Unknown"
     
     func fetchWeather(for city: String) async {
-        let apiKey = "8ff885aa6cce5897224ccf0665e7199d" 
+        guard let apiKey = AppSecrets.string("OpenWeatherAPIKey") else {
+            self.description = String(localized: "weather_load_error")
+            print("[WeatherViewModel] Missing OpenWeatherAPIKey in Secrets.plist")
+            return
+        }
         let cityEscaped = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? city
         let currentLang = Locale.current.language.languageCode?.identifier ?? "en"
         let urlString = """

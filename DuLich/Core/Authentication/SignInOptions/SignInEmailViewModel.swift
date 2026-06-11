@@ -4,9 +4,6 @@ import Combine
 import FirebaseAuth
 import FirebaseFirestore
 
-// Mật khẩu admin cứng – trong thực tế nên lưu bí mật hơn (Remote Config / Cloud Function)
-private let kAdminSecretPassword = "040905"
-
 @MainActor
 final class SignInEmailViewModel: ObservableObject {
     @Published var email: String = ""
@@ -40,7 +37,8 @@ final class SignInEmailViewModel: ObservableObject {
     /// Xác thực mật khẩu admin và nếu đúng thì ghi role=admin lên Firestore
     /// Trả về true nếu hợp lệ
     func verifyAdminAndUpgrade(uid: String) async -> Bool {
-        guard adminPassword == kAdminSecretPassword else {
+        guard let adminSecret = AppSecrets.string("AdminSecretPassword"),
+              adminPassword == adminSecret else {
             adminPasswordError = "Mật khẩu admin không đúng"
             return false
         }

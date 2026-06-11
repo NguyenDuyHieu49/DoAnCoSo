@@ -1,0 +1,21 @@
+# Secrets & local config
+Secrets.plist
+Config.plist
+.env
+.env.local
+*.xcconfig.local
+
+# Firebase (download from Firebase Console)
+DuLich/App/GoogleService-Info.plist
+
+# Xcode user data
+xcuserdata/
+*.xcuserstate
+*.xcbkptlist
+
+# macOS
+.DS_Store
+
+# Build
+DerivedData/
+build/

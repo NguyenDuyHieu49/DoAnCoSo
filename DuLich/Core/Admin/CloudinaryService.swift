@@ -8,11 +8,15 @@ import UIKit
 import Foundation
 
 struct CloudinaryService {
-    
-    private static let cloudName = "dmc7g558o"
-    private static let uploadPreset = "Dulich"
-    
+
+    private static var cloudName: String { AppSecrets.string("CloudinaryCloudName") ?? "" }
+    private static var uploadPreset: String { AppSecrets.string("CloudinaryUploadPreset") ?? "" }
+
     static func uploadImage(_ image: UIImage) async throws -> String {
+        guard !cloudName.isEmpty, !uploadPreset.isEmpty else {
+            throw NSError(domain: "Cloudinary", code: -3,
+                         userInfo: [NSLocalizedDescriptionKey: "Missing Cloudinary credentials in Secrets.plist"])
+        }
         guard let data = image.jpegData(compressionQuality: 0.8) else {
             throw NSError(domain: "Cloudinary", code: -1,
                          userInfo: [NSLocalizedDescriptionKey: String(localized: "image_convert_failed")])

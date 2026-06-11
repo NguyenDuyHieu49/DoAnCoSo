@@ -5,6 +5,10 @@ final class VNPayGateway {
     private init() {}
 
     func buildPaymentURL(amount: Int, orderInfo: String, txnRef: String) throws -> URL {
+        guard PaymentConfig.isVNPayConfigured else {
+            print("[VNPayGateway] Missing VNPay credentials in Secrets.plist")
+            throw PaymentError.processingFailed
+        }
         guard amount >= 5_000 else {
             throw PaymentError.invalidAmount(minimum: 5_000)
         }

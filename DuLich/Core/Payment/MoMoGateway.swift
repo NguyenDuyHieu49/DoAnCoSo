@@ -18,6 +18,10 @@ final class MoMoGateway {
     private init() {}
 
     func createPayment(amount: Int, orderInfo: String, orderId: String) async throws -> MoMoCreateResponse {
+        guard PaymentConfig.isMoMoConfigured else {
+            print("[MoMoGateway] Missing MoMo credentials in Secrets.plist")
+            throw PaymentError.processingFailed
+        }
         guard amount >= 1_000 else {
             throw PaymentError.invalidAmount(minimum: 1_000)
         }

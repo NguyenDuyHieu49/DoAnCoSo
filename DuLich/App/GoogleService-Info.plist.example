@@ -3,32 +3,32 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>170450615011-834qjphaod1cgeitsic6k6jqvdn1gh87.apps.googleusercontent.com</string>
+	<string>YOUR_CLIENT_ID.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.170450615011-834qjphaod1cgeitsic6k6jqvdn1gh87</string>
+	<string>com.googleusercontent.apps.YOUR_REVERSED_CLIENT_ID</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBIGNDhXep1rU9c7ue0bWGMjhy4pNidoF8</string>
+	<string>YOUR_FIREBASE_API_KEY</string>
 	<key>GCM_SENDER_ID</key>
-	<string>170450615011</string>
+	<string>YOUR_GCM_SENDER_ID</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.HieuNguyen.DuLich</string>
 	<key>PROJECT_ID</key>
-	<string>dulich-0409</string>
+	<string>YOUR_FIREBASE_PROJECT_ID</string>
 	<key>STORAGE_BUCKET</key>
-	<string>dulich-0409.firebasestorage.app</string>
+	<string>YOUR_PROJECT_ID.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:170450615011:ios:266b5c570deaba7ee2e3d6</string>
+	<string>1:YOUR_GCM_SENDER_ID:ios:YOUR_APP_ID</string>
 </dict>
 </plist>
